@@ -613,11 +613,13 @@
       overflow: hidden;
     }
 
-    .game-card__preview iframe {
+    .game-card__preview iframe,
+    .game-card__preview img {
       width: 100%;
       height: 100%;
       border: none;
       pointer-events: none;
+      object-fit: cover;
     }
 
     .game-card__preview-placeholder {
@@ -797,51 +799,7 @@
     <div class="games-grid">
       <!-- Game Card: Othello -->
       <article class="game-card">
-        <div class="game-card__preview" style="background: linear-gradient(135deg, #0d7a3e 0%, #064a25 100%);">
-          <div class="game-card__preview-placeholder">
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-              <!-- Board grid -->
-              <rect x="10" y="10" width="100" height="100" fill="#0a5f2f" rx="4"/>
-              <g stroke="#0d7a3e" stroke-width="1">
-                <line x1="35" y1="10" x2="35" y2="110"/>
-                <line x1="60" y1="10" x2="60" y2="110"/>
-                <line x1="85" y1="10" x2="85" y2="110"/>
-                <line x1="10" y1="35" x2="110" y2="35"/>
-                <line x1="10" y1="60" x2="110" y2="60"/>
-                <line x1="10" y1="85" x2="110" y2="85"/>
-              </g>
-              <!-- Discs with 3D effect -->
-              <defs>
-                <radialGradient id="blackDisc" cx="35%" cy="35%">
-                  <stop offset="0%" stop-color="#555"/>
-                  <stop offset="100%" stop-color="#111"/>
-                </radialGradient>
-                <radialGradient id="whiteDisc" cx="35%" cy="35%">
-                  <stop offset="0%" stop-color="#fff"/>
-                  <stop offset="100%" stop-color="#ccc"/>
-                </radialGradient>
-                <filter id="discShadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.4"/>
-                </filter>
-              </defs>
-              <!-- Row 1 -->
-              <circle cx="22.5" cy="22.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
-              <circle cx="47.5" cy="22.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
-              <circle cx="72.5" cy="22.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
-              <!-- Row 2 -->
-              <circle cx="47.5" cy="47.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
-              <circle cx="72.5" cy="47.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
-              <circle cx="97.5" cy="47.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
-              <!-- Row 3 -->
-              <circle cx="22.5" cy="72.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
-              <circle cx="47.5" cy="72.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
-              <circle cx="72.5" cy="72.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
-              <!-- Row 4 -->
-              <circle cx="47.5" cy="97.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
-              <circle cx="72.5" cy="97.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
-              <circle cx="97.5" cy="97.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
-            </svg>
-          </div>
+          <img src="images/othello_thumbnail.png" alt="Othello Game Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
             <a href="games/othello/" class="game-card__play-btn">Play</a>
           </div>
@@ -859,11 +817,7 @@
       <!-- Game Card: Shooting -->
       <article class="game-card">
         <div class="game-card__preview">
-          <div class="game-card__preview-placeholder">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
-              <polygon points="24,4 28,20 44,20 31,30 36,46 24,36 12,46 17,30 4,20 20,20" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </div>
+          <img src="images/space_shooter_thumbnail.png" alt="Space Shooter Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
             <a href="games/shooting/" class="game-card__play-btn">Play</a>
           </div>
@@ -881,17 +835,7 @@
       <!-- Game Card: Tetris -->
       <article class="game-card">
         <div class="game-card__preview">
-          <div class="game-card__preview-placeholder">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
-              <rect x="8" y="8" width="10" height="10" fill="#00f0f0"/>
-              <rect x="18" y="8" width="10" height="10" fill="#00f0f0"/>
-              <rect x="28" y="8" width="10" height="10" fill="#00f0f0"/>
-              <rect x="18" y="18" width="10" height="10" fill="#a000f0"/>
-              <rect x="8" y="28" width="10" height="10" fill="#f0a000"/>
-              <rect x="18" y="28" width="10" height="10" fill="#f0a000"/>
-              <rect x="28" y="28" width="10" height="10" fill="#f0a000"/>
-            </svg>
-          </div>
+          <img src="images/tetris_thumbnail.png" alt="Tetris Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
             <a href="games/tetris/" class="game-card__play-btn">Play</a>
           </div>
