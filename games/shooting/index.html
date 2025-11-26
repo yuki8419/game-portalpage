@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Space Shooter - WEB GAME PORTFOLIO</title>
   <style>
     * {
@@ -16,35 +16,54 @@
       background: #0a0a0f;
       color: #fff;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      touch-action: none;
     }
 
-    .back-link {
+    .home-btn {
       position: fixed;
       top: 1rem;
       left: 1rem;
-      color: rgba(255, 255, 255, 0.6);
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      transition: color 0.2s;
       z-index: 100;
+      transition: all 0.2s;
     }
 
-    .back-link:hover {
-      color: #fff;
+    .home-btn:hover, .home-btn:active {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #fff;
+    }
+
+    .home-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff;
     }
 
     .game-container {
       position: relative;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 480 / 640;
     }
 
     canvas {
       display: block;
+      width: 100%;
+      height: 100%;
       background: #0a0a0f;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -84,7 +103,7 @@
     }
 
     .game-overlay h1 {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 300;
       letter-spacing: 0.3em;
       text-transform: uppercase;
@@ -104,11 +123,12 @@
       margin-bottom: 2rem;
       text-align: center;
       line-height: 1.8;
+      padding: 0 1rem;
     }
 
     .start-btn {
-      padding: 0.8rem 2.5rem;
-      font-size: 0.9rem;
+      padding: 1rem 2.5rem;
+      font-size: 1rem;
       font-weight: 500;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -117,9 +137,10 @@
       border: 1px solid rgba(255, 255, 255, 0.4);
       cursor: pointer;
       transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .start-btn:hover {
+    .start-btn:hover, .start-btn:active {
       background: rgba(255, 255, 255, 0.1);
       border-color: #fff;
       box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
@@ -139,11 +160,87 @@
       font-size: 0.75rem;
       color: rgba(255, 255, 255, 0.4);
       letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    /* Mobile touch controls */
+    .touch-controls {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      gap: 1rem;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    .touch-joystick {
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .touch-joystick-knob {
+      width: 50px;
+      height: 50px;
+      background: rgba(100, 200, 255, 0.6);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .touch-fire {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 100, 100, 0.3);
+      border: 2px solid rgba(255, 100, 100, 0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 100, 100, 0.5);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .touch-fire:active {
+      background: rgba(255, 100, 100, 0.5);
+    }
+
+    @media (pointer: coarse), (max-width: 768px) {
+      .touch-controls {
+        display: flex;
+      }
+
+      .game-container {
+        max-width: 100vw;
+        max-height: 60vh;
+        max-height: 60dvh;
+      }
+
+      .controls-hint {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <a href="../../" class="back-link">Back to Portfolio</a>
+  <a href="../../" class="home-btn" title="Home">
+    <svg viewBox="0 0 24 24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </a>
 
   <div class="game-container">
     <canvas id="game" width="480" height="640"></canvas>
@@ -155,7 +252,7 @@
 
     <div class="game-overlay" id="start-screen">
       <h1>Space Shooter</h1>
-      <p>Arrow keys or WASD to move<br>Space to shoot</p>
+      <p>PC: Arrow keys / WASD + Space<br>Mobile: Joystick + Fire button</p>
       <button class="start-btn" id="start-btn">Start Game</button>
     </div>
 
@@ -168,6 +265,13 @@
     <div class="controls-hint">Arrow Keys / WASD + Space</div>
   </div>
 
+  <div class="touch-controls" id="touch-controls">
+    <div class="touch-joystick" id="joystick">
+      <div class="touch-joystick-knob" id="joystick-knob"></div>
+    </div>
+    <div class="touch-fire" id="fire-btn">FIRE</div>
+  </div>
+
   <script>
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
@@ -177,12 +281,26 @@
     const gameOverScreen = document.getElementById('game-over-screen');
     const finalScoreEl = document.getElementById('final-score');
 
+    // Touch controls
+    const joystick = document.getElementById('joystick');
+    const joystickKnob = document.getElementById('joystick-knob');
+    const fireBtn = document.getElementById('fire-btn');
+
     let gameRunning = false;
     let score = 0;
     let lives = 3;
     let player, bullets, enemies, stars, particles;
     let enemySpawnTimer = 0;
     let keys = {};
+
+    // Touch state
+    let touchJoystick = { active: false, x: 0, y: 0 };
+    let touchFiring = false;
+
+    // Scale factor for canvas
+    function getScale() {
+      return canvas.offsetWidth / canvas.width;
+    }
 
     class Player {
       constructor() {
@@ -195,17 +313,25 @@
       }
 
       update() {
+        // Keyboard controls
         if (keys['ArrowLeft'] || keys['KeyA']) this.x -= this.speed;
         if (keys['ArrowRight'] || keys['KeyD']) this.x += this.speed;
         if (keys['ArrowUp'] || keys['KeyW']) this.y -= this.speed;
         if (keys['ArrowDown'] || keys['KeyS']) this.y += this.speed;
+
+        // Touch joystick controls
+        if (touchJoystick.active) {
+          this.x += touchJoystick.x * this.speed;
+          this.y += touchJoystick.y * this.speed;
+        }
 
         this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
         this.y = Math.max(canvas.height / 2, Math.min(canvas.height - this.height, this.y));
 
         if (this.shootCooldown > 0) this.shootCooldown--;
 
-        if (keys['Space'] && this.shootCooldown === 0) {
+        // Keyboard or touch fire
+        if ((keys['Space'] || touchFiring) && this.shootCooldown === 0) {
           bullets.push(new Bullet(this.x + this.width / 2 - 2, this.y));
           this.shootCooldown = 10;
         }
@@ -445,6 +571,7 @@
       gameOverScreen.classList.remove('hidden');
     }
 
+    // Keyboard controls
     document.addEventListener('keydown', e => {
       keys[e.code] = true;
       if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
@@ -455,6 +582,72 @@
     document.addEventListener('keyup', e => {
       keys[e.code] = false;
     });
+
+    // Touch joystick controls
+    let joystickTouch = null;
+    const joystickRect = () => joystick.getBoundingClientRect();
+
+    joystick.addEventListener('touchstart', e => {
+      e.preventDefault();
+      joystickTouch = e.touches[0].identifier;
+      touchJoystick.active = true;
+    });
+
+    document.addEventListener('touchmove', e => {
+      for (let touch of e.touches) {
+        if (touch.identifier === joystickTouch) {
+          const rect = joystickRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const maxDist = rect.width / 2 - 25;
+
+          let dx = touch.clientX - centerX;
+          let dy = touch.clientY - centerY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist > maxDist) {
+            dx = (dx / dist) * maxDist;
+            dy = (dy / dist) * maxDist;
+          }
+
+          touchJoystick.x = dx / maxDist;
+          touchJoystick.y = dy / maxDist;
+
+          joystickKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        }
+      }
+    });
+
+    document.addEventListener('touchend', e => {
+      let found = false;
+      for (let touch of e.touches) {
+        if (touch.identifier === joystickTouch) {
+          found = true;
+        }
+      }
+      if (!found) {
+        joystickTouch = null;
+        touchJoystick.active = false;
+        touchJoystick.x = 0;
+        touchJoystick.y = 0;
+        joystickKnob.style.transform = 'translate(-50%, -50%)';
+      }
+    });
+
+    // Touch fire button
+    fireBtn.addEventListener('touchstart', e => {
+      e.preventDefault();
+      touchFiring = true;
+    });
+
+    fireBtn.addEventListener('touchend', e => {
+      touchFiring = false;
+    });
+
+    // Prevent scrolling on touch
+    document.body.addEventListener('touchmove', e => {
+      if (gameRunning) e.preventDefault();
+    }, { passive: false });
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', startGame);
