@@ -69,9 +69,10 @@
     }
 
     .game-board {
+      --cell-size: 28px;
       display: grid;
-      grid-template-columns: repeat(10, min(28px, 8vw));
-      grid-template-rows: repeat(20, min(28px, 8vw));
+      grid-template-columns: repeat(10, var(--cell-size));
+      grid-template-rows: repeat(20, var(--cell-size));
       gap: 1px;
       background: #0f0f1a;
       padding: 4px;
@@ -81,8 +82,8 @@
     }
 
     .cell {
-      width: min(28px, 8vw);
-      height: min(28px, 8vw);
+      width: var(--cell-size);
+      height: var(--cell-size);
       background: #16162a;
       border-radius: 2px;
     }
@@ -285,6 +286,7 @@
       body {
         justify-content: flex-start;
         padding-top: 4rem;
+        padding-bottom: 200px;
       }
 
       h1 {
@@ -306,19 +308,50 @@
       }
 
       .game-wrapper {
-        margin-bottom: 180px;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .game-board {
+        --cell-size: min(8vw, calc((100dvh - 320px) / 22));
       }
 
       .side-panel {
-        gap: 0.5rem;
+        flex-direction: row;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: calc(var(--cell-size, 8vw) * 10 + 20px);
+        justify-content: space-between;
       }
 
       .panel-box {
-        padding: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        flex: 1;
+        text-align: center;
+      }
+
+      .panel-box:first-child {
+        flex: none;
+      }
+
+      .next-piece {
+        grid-template-columns: repeat(4, 14px);
+        grid-template-rows: repeat(4, 14px);
+      }
+
+      .next-cell {
+        width: 14px;
+        height: 14px;
       }
 
       .stat-value {
         font-size: 1rem;
+      }
+
+      .panel-title {
+        font-size: 0.6rem;
+        margin-bottom: 0.25rem;
       }
     }
   </style>
