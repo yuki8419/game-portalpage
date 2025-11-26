@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEB GAME PORTFOLIO</title>
+  <style>
+    /* ================================
+       CSS Custom Properties
+    ================================ */
+    :root {
+      --color-text: #333333;
+      --color-text-light: #666666;
+      --color-bg: #fafafa;
+
+      --font-primary: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+
+      /* Sculpture colors - vibrant gradients */
+      --sculpture-cyan: rgba(0, 200, 220, 0.4);
+      --sculpture-purple: rgba(140, 80, 200, 0.35);
+      --sculpture-pink: rgba(220, 80, 150, 0.3);
+      --sculpture-blue: rgba(60, 120, 220, 0.35);
+    }
+
+    /* ================================
+       Reset & Base
+    ================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--color-bg);
+      overflow-x: hidden;
+    }
+
+    /* ================================
+       Hero Section Container
+    ================================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ================================
+       Background: Sculpture Layer
+    ================================ */
+    .sculpture-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      perspective: 1200px;
+      perspective-origin: 50% 50%;
+    }
+
+    /* Base sculpture element styles */
+    .sculpture {
+      position: absolute;
+      border-radius: 50%;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* --------------------------------
+       Outer ring - very subtle background element
+    -------------------------------- */
+    .sculpture--primary {
+      width: 75vmin;
+      height: 75vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -37.5vmin;
+      margin-left: -37.5vmin;
+      border: 1px solid rgba(0, 200, 220, 0.15);
+      background: none;
+      animation: rotate-primary 60s linear infinite;
+    }
+
+    .sculpture--primary::before,
+    .sculpture--primary::after {
+      display: none;
+    }
+
+    /* Hidden - not used */
+    .sculpture--secondary,
+    .sculpture--tertiary,
+    .sculpture--quaternary {
+      display: none;
+    }
+
+    /* --------------------------------
+       3D Gimbal rings - MAIN FEATURE
+       Three rings of equal size at orthogonal angles
+    -------------------------------- */
+    .sculpture--torus-1 {
+      width: 45vmin;
+      height: 45vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -22.5vmin;
+      margin-left: -22.5vmin;
+      border: 2px solid rgba(0, 200, 220, 0.6);
+      box-shadow:
+        0 0 30px rgba(0, 200, 220, 0.3),
+        inset 0 0 20px rgba(0, 200, 220, 0.1);
+      transform: rotateX(90deg) rotateY(0deg);
+    }
+
+    .sculpture--torus-2 {
+      width: 45vmin;
+      height: 45vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -22.5vmin;
+      margin-left: -22.5vmin;
+      border: 2px solid rgba(140, 80, 200, 0.6);
+      box-shadow:
+        0 0 30px rgba(140, 80, 200, 0.3),
+        inset 0 0 20px rgba(140, 80, 200, 0.1);
+      transform: rotateX(0deg) rotateY(90deg);
+    }
+
+    .sculpture--torus-3 {
+      width: 45vmin;
+      height: 45vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -22.5vmin;
+      margin-left: -22.5vmin;
+      border: 2px solid rgba(220, 80, 150, 0.6);
+      box-shadow:
+        0 0 30px rgba(220, 80, 150, 0.3),
+        inset 0 0 20px rgba(220, 80, 150, 0.1);
+      transform: rotateX(0deg) rotateY(0deg);
+    }
+
+    /* --------------------------------
+       Core - glowing center sphere
+    -------------------------------- */
+    .sculpture--core {
+      width: 18vmin;
+      height: 18vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -9vmin;
+      margin-left: -9vmin;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 20%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(200, 180, 255, 0.5) 0%, rgba(100, 200, 220, 0.3) 40%, transparent 70%);
+      border: none;
+      box-shadow:
+        0 0 40px rgba(140, 80, 200, 0.4),
+        0 0 80px rgba(0, 200, 220, 0.3);
+      animation: pulse-core 4s ease-in-out infinite;
+    }
+
+    /* --------------------------------
+       Wireframe Grid Planes
+    -------------------------------- */
+    .sculpture--plane-h {
+      width: 120vmin;
+      height: 120vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -60vmin;
+      margin-left: -60vmin;
+      border: none;
+      border-radius: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent 0px,
+          transparent 39px,
+          rgba(0, 200, 220, 0.15) 39px,
+          rgba(0, 200, 220, 0.15) 40px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 39px,
+          rgba(140, 80, 200, 0.12) 39px,
+          rgba(140, 80, 200, 0.12) 40px
+        );
+      animation: rotate-plane-h 90s linear infinite;
+      opacity: 0.9;
+    }
+
+    .sculpture--plane-v {
+      width: 100vmin;
+      height: 100vmin;
+      top: 50%;
+      left: 50%;
+      margin-top: -50vmin;
+      margin-left: -50vmin;
+      border: none;
+      border-radius: 0;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          transparent 0px,
+          transparent 59px,
+          rgba(60, 120, 220, 0.12) 59px,
+          rgba(60, 120, 220, 0.12) 60px
+        );
+      animation: rotate-plane-v 120s linear infinite;
+      opacity: 0.8;
+    }
+
+    /* --------------------------------
+       Floating accent shapes
+    -------------------------------- */
+    .sculpture--accent-1 {
+      width: 15vmin;
+      height: 15vmin;
+      top: 20%;
+      left: 15%;
+      border: 2px solid var(--sculpture-cyan);
+      background: radial-gradient(circle, rgba(0, 200, 220, 0.2) 0%, transparent 70%);
+      box-shadow: 0 0 40px rgba(0, 200, 220, 0.15);
+      animation: float-drift-1 25s ease-in-out infinite;
+    }
+
+    .sculpture--accent-2 {
+      width: 12vmin;
+      height: 12vmin;
+      top: 70%;
+      right: 20%;
+      left: auto;
+      border: 2px solid var(--sculpture-pink);
+      background: radial-gradient(circle, rgba(220, 80, 150, 0.15) 0%, transparent 70%);
+      box-shadow: 0 0 35px rgba(220, 80, 150, 0.12);
+      animation: float-drift-2 30s ease-in-out infinite;
+    }
+
+    .sculpture--accent-3 {
+      width: 8vmin;
+      height: 8vmin;
+      top: 25%;
+      right: 25%;
+      left: auto;
+      border: 2px solid var(--sculpture-purple);
+      background: radial-gradient(circle, rgba(140, 80, 200, 0.2) 0%, transparent 70%);
+      box-shadow: 0 0 30px rgba(140, 80, 200, 0.15);
+      animation: float-drift-3 35s ease-in-out infinite;
+    }
+
+    /* ================================
+       Keyframe Animations
+    ================================ */
+    
+    /* Primary sphere rotation - multi-axis */
+    @keyframes rotate-primary {
+      0% {
+        transform: rotateX(15deg) rotateY(0deg) rotateZ(5deg);
+      }
+      100% {
+        transform: rotateX(15deg) rotateY(360deg) rotateZ(5deg);
+      }
+    }
+
+    /* Secondary ellipse - tilted orbit */
+    @keyframes rotate-secondary {
+      0% {
+        transform: rotateX(70deg) rotateY(0deg) rotateZ(-15deg);
+      }
+      100% {
+        transform: rotateX(70deg) rotateY(360deg) rotateZ(-15deg);
+      }
+    }
+
+    /* Tertiary ring - vertical spin */
+    @keyframes rotate-tertiary {
+      0% {
+        transform: rotateX(85deg) rotateY(0deg) rotateZ(30deg);
+      }
+      100% {
+        transform: rotateX(85deg) rotateY(360deg) rotateZ(30deg);
+      }
+    }
+
+    /* Quaternary orb - slow drift */
+    @keyframes rotate-quaternary {
+      0% {
+        transform: rotateX(-10deg) rotateY(0deg) rotateZ(-5deg) scale(1);
+      }
+      50% {
+        transform: rotateX(-10deg) rotateY(180deg) rotateZ(-5deg) scale(1.05);
+      }
+      100% {
+        transform: rotateX(-10deg) rotateY(360deg) rotateZ(-5deg) scale(1);
+      }
+    }
+
+    /* 3D Torus rotations */
+    @keyframes rotate-torus-1 {
+      0% {
+        transform: rotateX(70deg) rotateY(0deg);
+      }
+      100% {
+        transform: rotateX(70deg) rotateY(360deg);
+      }
+    }
+
+    @keyframes rotate-torus-2 {
+      0% {
+        transform: rotateX(0deg) rotateY(70deg) rotateZ(0deg);
+      }
+      100% {
+        transform: rotateX(0deg) rotateY(70deg) rotateZ(360deg);
+      }
+    }
+
+    @keyframes rotate-torus-3 {
+      0% {
+        transform: rotateX(45deg) rotateY(45deg) rotateZ(0deg);
+      }
+      100% {
+        transform: rotateX(45deg) rotateY(45deg) rotateZ(360deg);
+      }
+    }
+
+    @keyframes pulse-core {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+
+    /* Inner ring rotations */
+    @keyframes rotate-inner {
+      0% { transform: rotateZ(0deg); }
+      100% { transform: rotateZ(360deg); }
+    }
+
+    @keyframes rotate-inner-reverse {
+      0% { transform: rotateZ(0deg); }
+      100% { transform: rotateZ(-360deg); }
+    }
+
+    /* Grid plane rotations */
+    @keyframes rotate-plane-h {
+      0% {
+        transform: rotateX(75deg) rotateZ(0deg);
+      }
+      100% {
+        transform: rotateX(75deg) rotateZ(360deg);
+      }
+    }
+
+    @keyframes rotate-plane-v {
+      0% {
+        transform: rotateY(80deg) rotateZ(0deg);
+      }
+      100% {
+        transform: rotateY(80deg) rotateZ(-360deg);
+      }
+    }
+
+    /* Floating accent drifts */
+    @keyframes float-drift-1 {
+      0%, 100% {
+        transform: translate(0, 0) rotateZ(0deg);
+        opacity: 0.8;
+      }
+      25% {
+        transform: translate(2vmin, -3vmin) rotateZ(90deg);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(-1vmin, -5vmin) rotateZ(180deg);
+        opacity: 0.7;
+      }
+      75% {
+        transform: translate(-3vmin, -2vmin) rotateZ(270deg);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes float-drift-2 {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+      }
+      33% {
+        transform: translate(-4vmin, 2vmin) scale(1.1);
+        opacity: 1;
+      }
+      66% {
+        transform: translate(2vmin, -3vmin) scale(0.95);
+        opacity: 0.7;
+      }
+    }
+
+    @keyframes float-drift-3 {
+      0%, 100% {
+        transform: translate(0, 0) rotateZ(0deg);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translate(-5vmin, 4vmin) rotateZ(180deg);
+        opacity: 1;
+      }
+    }
+
+    /* ================================
+       Foreground: Text Content (Static)
+    ================================ */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      /* Subtle backdrop for readability */
+      background: radial-gradient(
+        ellipse at center,
+        rgba(250, 250, 250, 0.85) 0%,
+        rgba(250, 250, 250, 0.4) 50%,
+        transparent 70%
+      );
+    }
+
+    .hero-title {
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--color-text);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--color-text-light);
+    }
+
+    /* ================================
+       Scroll Indicator (Optional subtle hint)
+    ================================ */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .scroll-hint__line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(51, 51, 51, 0.3) 50%,
+        transparent 100%
+      );
+      animation: scroll-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scroll-pulse {
+      0%, 100% {
+        opacity: 0.3;
+        transform: scaleY(1);
+      }
+      50% {
+        opacity: 0.6;
+        transform: scaleY(1.2);
+      }
+    }
+
+    /* ================================
+       Responsive Adjustments
+    ================================ */
+    @media (max-width: 768px) {
+      .sculpture--primary {
+        width: 80vmin;
+        height: 80vmin;
+        margin-top: -40vmin;
+        margin-left: -40vmin;
+      }
+
+      .sculpture--secondary {
+        width: 100vmin;
+        height: 55vmin;
+        margin-top: -27.5vmin;
+        margin-left: -50vmin;
+      }
+
+      .sculpture--accent-1,
+      .sculpture--accent-2,
+      .sculpture--accent-3 {
+        opacity: 0.5;
+      }
+
+      .hero-content {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        letter-spacing: 0.2em;
+      }
+
+      .sculpture--plane-h,
+      .sculpture--plane-v {
+        opacity: 0.4;
+      }
+    }
+
+    /* ================================
+       Reduced Motion Preference
+    ================================ */
+    @media (prefers-reduced-motion: reduce) {
+      .sculpture,
+      .sculpture::before,
+      .sculpture::after,
+      .scroll-hint__line {
+        animation: none;
+      }
+
+      .sculpture--primary {
+        transform: rotateX(15deg) rotateY(45deg) rotateZ(5deg);
+      }
+
+      .sculpture--secondary {
+        transform: rotateX(70deg) rotateY(30deg) rotateZ(-15deg);
+      }
+
+      .sculpture--tertiary {
+        transform: rotateX(85deg) rotateY(60deg) rotateZ(30deg);
+      }
+    }
+
+    /* ================================
+       Games Section
+    ================================ */
+    .games-section {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--color-text);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-line {
+      width: 60px;
+      height: 1px;
+      background: var(--color-text);
+      margin: 0 auto;
+      opacity: 0.3;
+    }
+
+    /* Game Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Game Card */
+    .game-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .game-card__preview {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      overflow: hidden;
+    }
+
+    .game-card__preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+
+    .game-card__preview-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: rgba(0, 0, 0, 0.15);
+    }
+
+    .game-card__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
+
+    .game-card:hover .game-card__overlay {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .game-card__play-btn {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      padding: 0.8rem 2rem;
+      background: #fff;
+      color: var(--color-text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
+    .game-card:hover .game-card__play-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .game-card__play-btn:hover {
+      background: var(--color-text);
+      color: #fff;
+    }
+
+    .game-card__info {
+      padding: 1.5rem;
+    }
+
+    .game-card__title {
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .game-card__description {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .game-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .game-card__tag {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--color-text-light);
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Empty State */
+    .games-empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--color-text-light);
+    }
+
+    .games-empty__icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    .games-empty__text {
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* Footer */
+    .site-footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .site-footer__text {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      letter-spacing: 0.1em;
+    }
+
+    /* Games Section Responsive */
+    @media (max-width: 768px) {
+      .games-section {
+        padding: 4rem 1.5rem;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero" aria-label="ヒーローセクション">
+    
+    <!-- Background: Sculpture Layer -->
+    <div class="sculpture-canvas" aria-hidden="true">
+      <!-- Wireframe grid planes -->
+      <div class="sculpture sculpture--plane-h"></div>
+      <div class="sculpture sculpture--plane-v"></div>
+      
+      <!-- Main sculptural forms -->
+      <div class="sculpture sculpture--secondary"></div>
+      <div class="sculpture sculpture--tertiary"></div>
+      <div class="sculpture sculpture--primary"></div>
+      <div class="sculpture sculpture--quaternary"></div>
+
+      <!-- 3D Torus rings -->
+      <div class="sculpture sculpture--torus-1"></div>
+      <div class="sculpture sculpture--torus-2"></div>
+      <div class="sculpture sculpture--torus-3"></div>
+      <div class="sculpture sculpture--core"></div>
+
+      <!-- Floating accent shapes -->
+      <div class="sculpture sculpture--accent-1"></div>
+      <div class="sculpture sculpture--accent-2"></div>
+      <div class="sculpture sculpture--accent-3"></div>
+    </div>
+
+    <!-- Foreground: Text Content (Static) -->
+    <div class="hero-content">
+      <h1 class="hero-title">WEB GAME PORTFOLIO</h1>
+      <p class="hero-subtitle">自作ブラウザゲーム作品集 / アーカイブ</p>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-hint">
+      <div class="scroll-hint__line"></div>
+    </div>
+
+  </section>
+
+  <!-- Games Section -->
+  <section class="games-section" id="games">
+    <header class="section-header">
+      <h2 class="section-title">Games</h2>
+      <div class="section-line"></div>
+    </header>
+
+    <div class="games-grid">
+      <!-- Game Card: Othello -->
+      <article class="game-card">
+        <div class="game-card__preview" style="background: linear-gradient(135deg, #0d7a3e 0%, #064a25 100%);">
+          <div class="game-card__preview-placeholder">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+              <!-- Board grid -->
+              <rect x="10" y="10" width="100" height="100" fill="#0a5f2f" rx="4"/>
+              <g stroke="#0d7a3e" stroke-width="1">
+                <line x1="35" y1="10" x2="35" y2="110"/>
+                <line x1="60" y1="10" x2="60" y2="110"/>
+                <line x1="85" y1="10" x2="85" y2="110"/>
+                <line x1="10" y1="35" x2="110" y2="35"/>
+                <line x1="10" y1="60" x2="110" y2="60"/>
+                <line x1="10" y1="85" x2="110" y2="85"/>
+              </g>
+              <!-- Discs with 3D effect -->
+              <defs>
+                <radialGradient id="blackDisc" cx="35%" cy="35%">
+                  <stop offset="0%" stop-color="#555"/>
+                  <stop offset="100%" stop-color="#111"/>
+                </radialGradient>
+                <radialGradient id="whiteDisc" cx="35%" cy="35%">
+                  <stop offset="0%" stop-color="#fff"/>
+                  <stop offset="100%" stop-color="#ccc"/>
+                </radialGradient>
+                <filter id="discShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.4"/>
+                </filter>
+              </defs>
+              <!-- Row 1 -->
+              <circle cx="22.5" cy="22.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+              <circle cx="47.5" cy="22.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+              <circle cx="72.5" cy="22.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+              <!-- Row 2 -->
+              <circle cx="47.5" cy="47.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+              <circle cx="72.5" cy="47.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+              <circle cx="97.5" cy="47.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+              <!-- Row 3 -->
+              <circle cx="22.5" cy="72.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+              <circle cx="47.5" cy="72.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+              <circle cx="72.5" cy="72.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+              <!-- Row 4 -->
+              <circle cx="47.5" cy="97.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+              <circle cx="72.5" cy="97.5" r="9" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+              <circle cx="97.5" cy="97.5" r="9" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+            </svg>
+          </div>
+          <div class="game-card__overlay">
+            <a href="games/othello/" class="game-card__play-btn">Play</a>
+          </div>
+        </div>
+        <div class="game-card__info">
+          <h3 class="game-card__title">Othello</h3>
+          <p class="game-card__description">クラシックなオセロゲーム。CPUと対戦できます。</p>
+          <div class="game-card__tags">
+            <span class="game-card__tag">Board Game</span>
+            <span class="game-card__tag">1-2 Players</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Game Card: Shooting -->
+      <article class="game-card">
+        <div class="game-card__preview">
+          <div class="game-card__preview-placeholder">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
+              <polygon points="24,4 28,20 44,20 31,30 36,46 24,36 12,46 17,30 4,20 20,20" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="game-card__overlay">
+            <a href="games/shooting/" class="game-card__play-btn">Play</a>
+          </div>
+        </div>
+        <div class="game-card__info">
+          <h3 class="game-card__title">Space Shooter</h3>
+          <p class="game-card__description">宇宙を舞台にしたシューティングゲーム。</p>
+          <div class="game-card__tags">
+            <span class="game-card__tag">Action</span>
+            <span class="game-card__tag">1 Player</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Game Card: Tetris -->
+      <article class="game-card">
+        <div class="game-card__preview">
+          <div class="game-card__preview-placeholder">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
+              <rect x="8" y="8" width="10" height="10" fill="#00f0f0"/>
+              <rect x="18" y="8" width="10" height="10" fill="#00f0f0"/>
+              <rect x="28" y="8" width="10" height="10" fill="#00f0f0"/>
+              <rect x="18" y="18" width="10" height="10" fill="#a000f0"/>
+              <rect x="8" y="28" width="10" height="10" fill="#f0a000"/>
+              <rect x="18" y="28" width="10" height="10" fill="#f0a000"/>
+              <rect x="28" y="28" width="10" height="10" fill="#f0a000"/>
+            </svg>
+          </div>
+          <div class="game-card__overlay">
+            <a href="games/tetris/" class="game-card__play-btn">Play</a>
+          </div>
+        </div>
+        <div class="game-card__info">
+          <h3 class="game-card__title">Tetris</h3>
+          <p class="game-card__description">落ちものパズルの定番。ラインを揃えて消していこう。</p>
+          <div class="game-card__tags">
+            <span class="game-card__tag">Puzzle</span>
+            <span class="game-card__tag">1 Player</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Add more game cards here -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p class="site-footer__text">WEB GAME PORTFOLIO</p>
+  </footer>
+</body>
+</html>
