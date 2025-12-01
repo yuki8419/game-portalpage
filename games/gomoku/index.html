@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gomoku - WEB GAME PORTFOLIO</title>
+  <style>
+    :root {
+      --board-bg: #dcb35c;
+      --board-line: #8b6914;
+      --cell-size: min(6vmin, 36px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+      z-index: 100;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .game-info {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      align-items: center;
+    }
+
+    .player-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stone-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #444;
+    }
+
+    .stone-icon--black {
+      background: radial-gradient(circle at 30% 30%, #444, #111);
+    }
+
+    .stone-icon--white {
+      background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+    }
+
+    .current-turn {
+      padding: 0.3rem 0.8rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    .board-container {
+      position: relative;
+      padding: calc(var(--cell-size) / 2);
+      background: var(--board-bg);
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(15, var(--cell-size));
+      grid-template-rows: repeat(15, var(--cell-size));
+      position: relative;
+    }
+
+    /* Grid lines */
+    .board::before {
+      content: '';
+      position: absolute;
+      top: calc(var(--cell-size) / 2);
+      left: calc(var(--cell-size) / 2);
+      right: calc(var(--cell-size) / 2);
+      bottom: calc(var(--cell-size) / 2);
+      background-image:
+        linear-gradient(var(--board-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--board-line) 1px, transparent 1px);
+      background-size: var(--cell-size) var(--cell-size);
+      pointer-events: none;
+    }
+
+    /* Star points (hoshi) */
+    .star-point {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--board-line);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .cell {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cell:hover::after {
+      content: '';
+      width: 80%;
+      height: 80%;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.2);
+      position: absolute;
+    }
+
+    .cell.has-stone:hover::after {
+      display: none;
+    }
+
+    .stone {
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .stone--black {
+      background: radial-gradient(circle at 30% 30%, #555, #111);
+    }
+
+    .stone--white {
+      background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+    }
+
+    .stone.last-move::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30%;
+      height: 30%;
+      border-radius: 50%;
+      background: rgba(255, 0, 0, 0.6);
+    }
+
+    .stone--white.last-move::after {
+      background: rgba(255, 0, 0, 0.8);
+    }
+
+    .stone.winning {
+      animation: pulse-win 0.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-win {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+
+    .game-controls {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.6rem 1.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      min-height: 1.5em;
+    }
+
+    .game-over {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 200;
+    }
+
+    .game-over.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .game-over h2 {
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    .game-over p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      :root {
+        --cell-size: min(5.5vmin, 28px);
+      }
+
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      .game-info {
+        gap: 1rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="../../" class="back-link">← Back to Portfolio</a>
+
+  <h1>Gomoku</h1>
+
+  <div class="game-info">
+    <div class="player-indicator">
+      <div class="stone-icon stone-icon--black"></div>
+      <span>Black</span>
+    </div>
+    <div class="current-turn" id="turn-indicator">Black's Turn</div>
+    <div class="player-indicator">
+      <div class="stone-icon stone-icon--white"></div>
+      <span>White</span>
+    </div>
+  </div>
+
+  <div class="board-container">
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="game-controls">
+    <button id="reset-btn">New Game</button>
+    <button id="undo-btn">Undo</button>
+    <button id="cpu-toggle">CPU: ON</button>
+  </div>
+
+  <p class="message" id="message"></p>
+
+  <div class="game-over" id="game-over">
+    <h2 id="winner-text">Game Over</h2>
+    <p id="game-over-message">Five in a row!</p>
+    <button id="play-again-btn">Play Again</button>
+  </div>
+
+  <script>
+    const EMPTY = 0, BLACK = 1, WHITE = 2;
+    const BOARD_SIZE = 15;
+    const WIN_COUNT = 5;
+
+    let board = [];
+    let currentPlayer = BLACK;
+    let cpuEnabled = true;
+    let gameActive = true;
+    let moveHistory = [];
+    let winningStones = [];
+
+    const boardEl = document.getElementById('board');
+    const turnIndicator = document.getElementById('turn-indicator');
+    const messageEl = document.getElementById('message');
+    const gameOverEl = document.getElementById('game-over');
+    const winnerTextEl = document.getElementById('winner-text');
+    const gameOverMessageEl = document.getElementById('game-over-message');
+    const cpuToggleBtn = document.getElementById('cpu-toggle');
+    const undoBtn = document.getElementById('undo-btn');
+
+    // Star points for 15x15 board
+    const starPoints = [
+      { row: 3, col: 3 }, { row: 3, col: 7 }, { row: 3, col: 11 },
+      { row: 7, col: 3 }, { row: 7, col: 7 }, { row: 7, col: 11 },
+      { row: 11, col: 3 }, { row: 11, col: 7 }, { row: 11, col: 11 }
+    ];
+
+    function initBoard() {
+      board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(EMPTY));
+      currentPlayer = BLACK;
+      gameActive = true;
+      moveHistory = [];
+      winningStones = [];
+      gameOverEl.classList.remove('show');
+      messageEl.textContent = '';
+      renderBoard();
+      updateTurnIndicator();
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = '';
+
+      // Add star points
+      starPoints.forEach(({ row, col }) => {
+        const point = document.createElement('div');
+        point.className = 'star-point';
+        point.style.left = `calc(${col} * var(--cell-size) + var(--cell-size) / 2)`;
+        point.style.top = `calc(${row} * var(--cell-size) + var(--cell-size) / 2)`;
+        boardEl.appendChild(point);
+      });
+
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.dataset.row = row;
+          cell.dataset.col = col;
+
+          if (board[row][col] !== EMPTY) {
+            cell.classList.add('has-stone');
+            const stone = document.createElement('div');
+            stone.className = `stone stone--${board[row][col] === BLACK ? 'black' : 'white'}`;
+
+            // Mark last move
+            if (moveHistory.length > 0) {
+              const lastMove = moveHistory[moveHistory.length - 1];
+              if (lastMove.row === row && lastMove.col === col) {
+                stone.classList.add('last-move');
+              }
+            }
+
+            // Mark winning stones
+            if (winningStones.some(s => s.row === row && s.col === col)) {
+              stone.classList.add('winning');
+            }
+
+            cell.appendChild(stone);
+          }
+
+          cell.addEventListener('click', () => handleCellClick(row, col));
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function handleCellClick(row, col) {
+      if (!gameActive || board[row][col] !== EMPTY) return;
+      if (cpuEnabled && currentPlayer === WHITE) return;
+
+      makeMove(row, col, currentPlayer);
+    }
+
+    function makeMove(row, col, player) {
+      if (board[row][col] !== EMPTY) return false;
+
+      board[row][col] = player;
+      moveHistory.push({ row, col, player });
+
+      const winner = checkWin(row, col, player);
+      renderBoard();
+
+      if (winner) {
+        endGame(player);
+        return true;
+      }
+
+      if (isBoardFull()) {
+        endGame(null);
+        return true;
+      }
+
+      switchTurn();
+      return true;
+    }
+
+    function checkWin(row, col, player) {
+      const directions = [
+        [0, 1],   // horizontal
+        [1, 0],   // vertical
+        [1, 1],   // diagonal \
+        [1, -1]   // diagonal /
+      ];
+
+      for (const [dr, dc] of directions) {
+        const stones = [{ row, col }];
+
+        // Check positive direction
+        let r = row + dr, c = col + dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === player) {
+          stones.push({ row: r, col: c });
+          r += dr;
+          c += dc;
+        }
+
+        // Check negative direction
+        r = row - dr;
+        c = col - dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === player) {
+          stones.push({ row: r, col: c });
+          r -= dr;
+          c -= dc;
+        }
+
+        if (stones.length >= WIN_COUNT) {
+          winningStones = stones;
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    function isBoardFull() {
+      return board.every(row => row.every(cell => cell !== EMPTY));
+    }
+
+    function switchTurn() {
+      currentPlayer = currentPlayer === BLACK ? WHITE : BLACK;
+      updateTurnIndicator();
+
+      if (cpuEnabled && currentPlayer === WHITE && gameActive) {
+        setTimeout(cpuMove, 400);
+      }
+    }
+
+    function cpuMove() {
+      const move = findBestMove();
+      if (move) {
+        makeMove(move.row, move.col, WHITE);
+      }
+    }
+
+    function findBestMove() {
+      // Priority: Win > Block > Extend > Center
+      let bestMove = null;
+      let bestScore = -Infinity;
+
+      const emptyCells = [];
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          if (board[row][col] === EMPTY) {
+            emptyCells.push({ row, col });
+          }
+        }
+      }
+
+      for (const { row, col } of emptyCells) {
+        const score = evaluateMove(row, col);
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = { row, col };
+        }
+      }
+
+      return bestMove;
+    }
+
+    function evaluateMove(row, col) {
+      let score = 0;
+
+      // Check if this move wins for CPU
+      board[row][col] = WHITE;
+      if (checkWinWithoutUpdate(row, col, WHITE)) {
+        board[row][col] = EMPTY;
+        return 100000;
+      }
+      board[row][col] = EMPTY;
+
+      // Check if this blocks player's win
+      board[row][col] = BLACK;
+      if (checkWinWithoutUpdate(row, col, BLACK)) {
+        board[row][col] = EMPTY;
+        return 50000;
+      }
+      board[row][col] = EMPTY;
+
+      // Evaluate line potential
+      score += evaluateLineScore(row, col, WHITE) * 2;
+      score += evaluateLineScore(row, col, BLACK);
+
+      // Prefer center
+      const centerDistance = Math.abs(row - 7) + Math.abs(col - 7);
+      score += (14 - centerDistance) * 2;
+
+      // Prefer adjacent to existing stones
+      if (hasAdjacentStone(row, col)) {
+        score += 10;
+      }
+
+      return score;
+    }
+
+    function checkWinWithoutUpdate(row, col, player) {
+      const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+
+      for (const [dr, dc] of directions) {
+        let count = 1;
+        let r = row + dr, c = col + dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === player) {
+          count++;
+          r += dr;
+          c += dc;
+        }
+        r = row - dr;
+        c = col - dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === player) {
+          count++;
+          r -= dr;
+          c -= dc;
+        }
+        if (count >= WIN_COUNT) return true;
+      }
+      return false;
+    }
+
+    function evaluateLineScore(row, col, player) {
+      const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+      let totalScore = 0;
+
+      for (const [dr, dc] of directions) {
+        let count = 0;
+        let openEnds = 0;
+
+        // Positive direction
+        let r = row + dr, c = col + dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === player) {
+          count++;
+          r += dr;
+          c += dc;
+        }
+        if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === EMPTY) {
+          openEnds++;
+        }
+
+        // Negative direction
+        r = row - dr;
+        c = col - dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === player) {
+          count++;
+          r -= dr;
+          c -= dc;
+        }
+        if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] === EMPTY) {
+          openEnds++;
+        }
+
+        if (count >= 4) totalScore += 1000;
+        else if (count === 3 && openEnds === 2) totalScore += 500;
+        else if (count === 3 && openEnds === 1) totalScore += 100;
+        else if (count === 2 && openEnds === 2) totalScore += 50;
+        else if (count === 2 && openEnds === 1) totalScore += 10;
+        else if (count === 1 && openEnds === 2) totalScore += 5;
+      }
+
+      return totalScore;
+    }
+
+    function hasAdjacentStone(row, col) {
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const r = row + dr, c = col + dc;
+          if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && board[r][c] !== EMPTY) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function undo() {
+      if (moveHistory.length === 0 || !gameActive) return;
+
+      // Undo CPU move if applicable
+      if (cpuEnabled && moveHistory.length > 0) {
+        const lastMove = moveHistory.pop();
+        board[lastMove.row][lastMove.col] = EMPTY;
+
+        if (moveHistory.length > 0 && moveHistory[moveHistory.length - 1].player === BLACK) {
+          const playerMove = moveHistory.pop();
+          board[playerMove.row][playerMove.col] = EMPTY;
+        }
+      } else {
+        const lastMove = moveHistory.pop();
+        board[lastMove.row][lastMove.col] = EMPTY;
+      }
+
+      currentPlayer = BLACK;
+      winningStones = [];
+      renderBoard();
+      updateTurnIndicator();
+    }
+
+    function updateTurnIndicator() {
+      turnIndicator.textContent = currentPlayer === BLACK ? "Black's Turn" : "White's Turn";
+    }
+
+    function endGame(winner) {
+      gameActive = false;
+
+      if (winner === BLACK) {
+        winnerTextEl.textContent = 'Black Wins!';
+        gameOverMessageEl.textContent = 'Five in a row!';
+      } else if (winner === WHITE) {
+        winnerTextEl.textContent = 'White Wins!';
+        gameOverMessageEl.textContent = 'Five in a row!';
+      } else {
+        winnerTextEl.textContent = "It's a Draw!";
+        gameOverMessageEl.textContent = 'The board is full.';
+      }
+
+      renderBoard();
+      setTimeout(() => {
+        gameOverEl.classList.add('show');
+      }, 500);
+    }
+
+    document.getElementById('reset-btn').addEventListener('click', initBoard);
+    document.getElementById('play-again-btn').addEventListener('click', initBoard);
+    undoBtn.addEventListener('click', undo);
+    cpuToggleBtn.addEventListener('click', () => {
+      cpuEnabled = !cpuEnabled;
+      cpuToggleBtn.textContent = `CPU: ${cpuEnabled ? 'ON' : 'OFF'}`;
+    });
+
+    initBoard();
+  </script>
+</body>
+</html>
