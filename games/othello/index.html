@@ -171,6 +171,84 @@
       border-color: rgba(255, 255, 255, 0.5);
     }
 
+    select {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      background: #2a2a2a;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    select:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Combo display */
+    .combo-display {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 100;
+      text-shadow: 0 0 20px currentColor;
+    }
+
+    .combo-display.show {
+      animation: comboPopup 1s ease-out forwards;
+    }
+
+    .combo-display.nice { color: #4ade80; }
+    .combo-display.great { color: #facc15; }
+    .combo-display.amazing { color: #f97316; }
+    .combo-display.incredible { color: #ec4899; }
+
+    @keyframes comboPopup {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+      40% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(1);
+      }
+    }
+
+    /* Particles */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      z-index: 99;
+    }
+
+    @keyframes particleFly {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+      }
+    }
+
     .message {
       margin-top: 1rem;
       font-size: 0.9rem;
@@ -232,9 +310,16 @@
   <div class="game-controls">
     <button id="reset-btn">New Game</button>
     <button id="cpu-toggle">CPU: ON</button>
+    <select id="difficulty-select">
+      <option value="easy">Easy</option>
+      <option value="normal" selected>Normal</option>
+      <option value="hard">Hard</option>
+    </select>
   </div>
 
   <p class="message" id="message"></p>
+
+  <div class="combo-display" id="combo-display"></div>
 
   <div class="game-over" id="game-over">
     <h2 id="winner-text">Game Over</h2>
@@ -254,6 +339,7 @@
     let currentPlayer = BLACK;
     let cpuEnabled = true;
     let gameActive = true;
+    let difficulty = 'normal';
 
     const boardEl = document.getElementById('board');
     const blackScoreEl = document.getElementById('black-score');
@@ -264,6 +350,8 @@
     const winnerTextEl = document.getElementById('winner-text');
     const finalScoreEl = document.getElementById('final-score');
     const cpuToggleBtn = document.getElementById('cpu-toggle');
+    const difficultySelect = document.getElementById('difficulty-select');
+    const comboDisplay = document.getElementById('combo-display');
 
     function initBoard() {
       board = Array(8).fill(null).map(() => Array(8).fill(EMPTY));
@@ -359,6 +447,12 @@
       animateFlip(flippable);
       updateScore();
 
+      // Show combo and particles for good moves
+      if (flippable.length >= 3) {
+        showCombo(flippable.length);
+        createParticles(flippable, player);
+      }
+
       setTimeout(() => {
         switchTurn();
       }, 300);
@@ -371,6 +465,78 @@
         const cellIndex = row * 8 + col;
         const disc = boardEl.children[cellIndex].querySelector('.disc');
         if (disc) disc.classList.add('flip');
+      });
+    }
+
+    function showCombo(flipsCount) {
+      let text = '';
+      let className = '';
+
+      if (flipsCount >= 10) {
+        text = 'INCREDIBLE!';
+        className = 'incredible';
+      } else if (flipsCount >= 7) {
+        text = 'AMAZING!';
+        className = 'amazing';
+      } else if (flipsCount >= 5) {
+        text = 'GREAT!';
+        className = 'great';
+      } else if (flipsCount >= 3) {
+        text = 'NICE!';
+        className = 'nice';
+      }
+
+      if (text) {
+        comboDisplay.textContent = text;
+        comboDisplay.className = 'combo-display ' + className;
+        void comboDisplay.offsetWidth;
+        comboDisplay.classList.add('show');
+
+        setTimeout(() => {
+          comboDisplay.classList.remove('show');
+        }, 1000);
+      }
+    }
+
+    function createParticles(positions, player) {
+      const colors = player === BLACK
+        ? ['#333', '#555', '#777', '#4ade80', '#22c55e']
+        : ['#fff', '#eee', '#ddd', '#facc15', '#fbbf24'];
+
+      positions.forEach(({ row, col }) => {
+        const cellIndex = row * 8 + col;
+        const cell = boardEl.children[cellIndex];
+        const rect = cell.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const particleCount = Math.min(positions.length, 5);
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+
+          const size = Math.random() * 8 + 4;
+          const angle = Math.random() * Math.PI * 2;
+          const distance = Math.random() * 60 + 40;
+          const tx = Math.cos(angle) * distance;
+          const ty = Math.sin(angle) * distance;
+
+          particle.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            left: ${centerX - size/2}px;
+            top: ${centerY - size/2}px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            --tx: ${tx}px;
+            --ty: ${ty}px;
+            animation: particleFly ${Math.random() * 0.3 + 0.5}s ease-out forwards;
+          `;
+
+          document.body.appendChild(particle);
+
+          setTimeout(() => particle.remove(), 800);
+        }
       });
     }
 
@@ -400,24 +566,135 @@
       }
     }
 
+    // Position weights for strategic evaluation
+    const POSITION_WEIGHTS = [
+      [100, -20,  10,   5,   5,  10, -20, 100],
+      [-20, -50,  -2,  -2,  -2,  -2, -50, -20],
+      [ 10,  -2,   1,   1,   1,   1,  -2,  10],
+      [  5,  -2,   1,   0,   0,   1,  -2,   5],
+      [  5,  -2,   1,   0,   0,   1,  -2,   5],
+      [ 10,  -2,   1,   1,   1,   1,  -2,  10],
+      [-20, -50,  -2,  -2,  -2,  -2, -50, -20],
+      [100, -20,  10,   5,   5,  10, -20, 100]
+    ];
+
+    function evaluateBoard(player) {
+      let score = 0;
+      const opponent = player === BLACK ? WHITE : BLACK;
+
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          if (board[row][col] === player) {
+            score += POSITION_WEIGHTS[row][col];
+          } else if (board[row][col] === opponent) {
+            score -= POSITION_WEIGHTS[row][col];
+          }
+        }
+      }
+
+      return score;
+    }
+
+    function minimax(depth, isMaximizing, alpha, beta) {
+      const player = isMaximizing ? WHITE : BLACK;
+      const validMoves = getValidMoves(player);
+
+      if (depth === 0 || validMoves.length === 0) {
+        return evaluateBoard(WHITE);
+      }
+
+      if (isMaximizing) {
+        let maxEval = -Infinity;
+        for (const move of validMoves) {
+          const savedBoard = board.map(row => [...row]);
+          const flippable = getFlippableDiscs(move.row, move.col, player);
+
+          board[move.row][move.col] = player;
+          flippable.forEach(({ row: r, col: c }) => {
+            board[r][c] = player;
+          });
+
+          const evalScore = minimax(depth - 1, false, alpha, beta);
+          board = savedBoard;
+
+          maxEval = Math.max(maxEval, evalScore);
+          alpha = Math.max(alpha, evalScore);
+          if (beta <= alpha) break;
+        }
+        return maxEval;
+      } else {
+        let minEval = Infinity;
+        for (const move of validMoves) {
+          const savedBoard = board.map(row => [...row]);
+          const flippable = getFlippableDiscs(move.row, move.col, player);
+
+          board[move.row][move.col] = player;
+          flippable.forEach(({ row: r, col: c }) => {
+            board[r][c] = player;
+          });
+
+          const evalScore = minimax(depth - 1, true, alpha, beta);
+          board = savedBoard;
+
+          minEval = Math.min(minEval, evalScore);
+          beta = Math.min(beta, evalScore);
+          if (beta <= alpha) break;
+        }
+        return minEval;
+      }
+    }
+
     function cpuMove() {
       const validMoves = getValidMoves(WHITE);
       if (validMoves.length === 0) return;
 
-      // Simple AI: pick move that flips most discs
-      let bestMove = validMoves[0];
-      let maxFlips = 0;
+      let bestMove;
 
-      validMoves.forEach(move => {
-        const flips = getFlippableDiscs(move.row, move.col, WHITE).length;
-        // Prioritize corners
-        const isCorner = (move.row === 0 || move.row === 7) && (move.col === 0 || move.col === 7);
-        const score = flips + (isCorner ? 100 : 0);
-        if (score > maxFlips) {
-          maxFlips = score;
-          bestMove = move;
+      if (difficulty === 'easy') {
+        // Easy: Random move with slight preference for more flips
+        const weights = validMoves.map(move => {
+          const flips = getFlippableDiscs(move.row, move.col, WHITE).length;
+          return Math.random() + flips * 0.1;
+        });
+        const maxWeight = Math.max(...weights);
+        bestMove = validMoves[weights.indexOf(maxWeight)];
+
+      } else if (difficulty === 'normal') {
+        // Normal: Greedy with corner priority
+        let maxScore = -Infinity;
+        validMoves.forEach(move => {
+          const flips = getFlippableDiscs(move.row, move.col, WHITE).length;
+          const positionBonus = POSITION_WEIGHTS[move.row][move.col];
+          const score = flips * 2 + positionBonus;
+          if (score > maxScore) {
+            maxScore = score;
+            bestMove = move;
+          }
+        });
+
+      } else {
+        // Hard: Minimax with alpha-beta pruning
+        let maxScore = -Infinity;
+        const searchDepth = 4;
+
+        for (const move of validMoves) {
+          const savedBoard = board.map(row => [...row]);
+          const flippable = getFlippableDiscs(move.row, move.col, WHITE);
+
+          board[move.row][move.col] = WHITE;
+          flippable.forEach(({ row: r, col: c }) => {
+            board[r][c] = WHITE;
+          });
+
+          const score = minimax(searchDepth - 1, false, -Infinity, Infinity);
+          board = savedBoard;
+
+          if (score > maxScore) {
+            maxScore = score;
+            bestMove = move;
+          }
         }
-      });
+      }
 
       makeMove(bestMove.row, bestMove.col, WHITE);
     }
@@ -460,6 +737,9 @@
     cpuToggleBtn.addEventListener('click', () => {
       cpuEnabled = !cpuEnabled;
       cpuToggleBtn.textContent = `CPU: ${cpuEnabled ? 'ON' : 'OFF'}`;
+    });
+    difficultySelect.addEventListener('change', (e) => {
+      difficulty = e.target.value;
     });
 
     initBoard();
