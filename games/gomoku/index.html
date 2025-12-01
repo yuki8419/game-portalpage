@@ -8,7 +8,7 @@
     :root {
       --board-bg: #dcb35c;
       --board-line: #8b6914;
-      --cell-size: min(6vmin, 36px);
+      --cell-size: min(6vmin, 40px);
     }
 
     * {
@@ -262,19 +262,114 @@
       margin-bottom: 2rem;
     }
 
-    /* Responsive */
+    /* Responsive - Mobile optimized for easy tapping */
     @media (max-width: 600px) {
       :root {
-        --cell-size: min(5.5vmin, 28px);
+        /* Use viewport width for maximum board size on mobile */
+        --cell-size: calc((100vw - 2rem) / 16);
+      }
+
+      body {
+        padding: 0.5rem;
+        justify-content: flex-start;
+        padding-top: 3rem;
+      }
+
+      .back-link {
+        font-size: 0.75rem;
+        top: 0.5rem;
+        left: 0.5rem;
       }
 
       h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
       }
 
       .game-info {
-        gap: 1rem;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .stone-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .current-turn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+      }
+
+      .board-container {
+        padding: calc(var(--cell-size) / 2);
+        border-radius: 3px;
+      }
+
+      /* Larger touch targets */
+      .cell {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .cell::before {
+        content: '';
+        position: absolute;
+        width: 140%;
+        height: 140%;
+        top: -20%;
+        left: -20%;
+      }
+
+      .game-controls {
+        margin-top: 1rem;
+        gap: 0.5rem;
+      }
+
+      button {
+        padding: 0.8rem 1.2rem;
         font-size: 0.8rem;
+        min-height: 44px; /* iOS recommended touch target */
+      }
+
+      .message {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .game-over h2 {
+        font-size: 1.5rem;
+      }
+
+      .game-over p {
+        font-size: 0.9rem;
+      }
+
+      .game-over button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+      }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 380px) {
+      :root {
+        --cell-size: calc((100vw - 1.5rem) / 16);
+      }
+
+      body {
+        padding: 0.25rem;
+        padding-top: 2.5rem;
+      }
+
+      h1 {
+        font-size: 1rem;
+      }
+
+      .game-info {
+        flex-wrap: wrap;
+        justify-content: center;
       }
     }
   </style>
