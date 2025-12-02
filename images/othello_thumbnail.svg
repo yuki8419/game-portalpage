@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250">
+  <defs>
+    <linearGradient id="boardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d7a3e"/>
+      <stop offset="100%" style="stop-color:#0a5f2f"/>
+    </linearGradient>
+    <linearGradient id="blackDisc" x1="30%" y1="30%" x2="70%" y2="70%">
+      <stop offset="0%" style="stop-color:#444"/>
+      <stop offset="100%" style="stop-color:#111"/>
+    </linearGradient>
+    <linearGradient id="whiteDisc" x1="30%" y1="30%" x2="70%" y2="70%">
+      <stop offset="0%" style="stop-color:#fff"/>
+      <stop offset="100%" style="stop-color:#ccc"/>
+    </linearGradient>
+    <filter id="discShadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="250" fill="#1a1a1a"/>
+
+  <!-- Board -->
+  <rect x="100" y="25" width="200" height="200" fill="url(#boardGrad)" rx="4"/>
+
+  <!-- Grid lines -->
+  <g stroke="#0a5f2f" stroke-width="1">
+    <line x1="125" y1="25" x2="125" y2="225"/>
+    <line x1="150" y1="25" x2="150" y2="225"/>
+    <line x1="175" y1="25" x2="175" y2="225"/>
+    <line x1="200" y1="25" x2="200" y2="225"/>
+    <line x1="225" y1="25" x2="225" y2="225"/>
+    <line x1="250" y1="25" x2="250" y2="225"/>
+    <line x1="275" y1="25" x2="275" y2="225"/>
+    <line x1="100" y1="50" x2="300" y2="50"/>
+    <line x1="100" y1="75" x2="300" y2="75"/>
+    <line x1="100" y1="100" x2="300" y2="100"/>
+    <line x1="100" y1="125" x2="300" y2="125"/>
+    <line x1="100" y1="150" x2="300" y2="150"/>
+    <line x1="100" y1="175" x2="300" y2="175"/>
+    <line x1="100" y1="200" x2="300" y2="200"/>
+  </g>
+
+  <!-- Discs - Row 1 -->
+  <circle cx="137.5" cy="62.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="187.5" cy="62.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="237.5" cy="62.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+
+  <!-- Discs - Row 2 -->
+  <circle cx="112.5" cy="87.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="162.5" cy="87.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="212.5" cy="87.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="262.5" cy="87.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+
+  <!-- Discs - Row 3 (center pattern) -->
+  <circle cx="137.5" cy="112.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="162.5" cy="112.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="187.5" cy="112.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="212.5" cy="112.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="237.5" cy="112.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+
+  <!-- Discs - Row 4 (center pattern) -->
+  <circle cx="162.5" cy="137.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="187.5" cy="137.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="212.5" cy="137.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="237.5" cy="137.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+
+  <!-- Discs - Row 5 -->
+  <circle cx="137.5" cy="162.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="187.5" cy="162.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="212.5" cy="162.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="287.5" cy="162.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+
+  <!-- Discs - Row 6 -->
+  <circle cx="112.5" cy="187.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="162.5" cy="187.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="237.5" cy="187.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="262.5" cy="187.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+
+  <!-- Discs - Row 7 -->
+  <circle cx="137.5" cy="212.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+  <circle cx="187.5" cy="212.5" r="10" fill="url(#blackDisc)" filter="url(#discShadow)"/>
+  <circle cx="212.5" cy="212.5" r="10" fill="url(#whiteDisc)" filter="url(#discShadow)"/>
+
+  <!-- Valid move indicators -->
+  <circle cx="262.5" cy="62.5" r="4" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="287.5" cy="87.5" r="4" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="112.5" cy="137.5" r="4" fill="rgba(255,255,255,0.3)"/>
+</svg>
