@@ -259,6 +259,232 @@
       text-align: center;
     }
 
+    /* Help button */
+    .help-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #fff;
+      cursor: pointer;
+      z-index: 100;
+      transition: all 0.2s;
+    }
+
+    .help-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #fff;
+    }
+
+    /* Help modal */
+    .help-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 200;
+      padding: 1rem;
+    }
+
+    .help-modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .help-content {
+      background: #2a2a2a;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .help-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .help-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .help-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .help-header h2 {
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .help-body {
+      padding: 1.5rem;
+    }
+
+    .help-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .help-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .help-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #4ade80;
+    }
+
+    .help-section p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 0.5rem;
+    }
+
+    .help-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .help-control {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    .help-control-icon {
+      font-size: 1.5rem;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .help-control-text {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .help-control-text strong {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .help-control-text span {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+    }
+
+    /* PC vs Mobile help tabs */
+    .help-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .help-tab {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .help-tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .help-tab.active {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: #4ade80;
+      color: #4ade80;
+    }
+
+    .help-panel {
+      display: none;
+    }
+
+    .help-panel.active {
+      display: block;
+    }
+
+    .number-legend {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .number-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .number-item .num {
+      font-weight: 700;
+      width: 20px;
+      text-align: center;
+    }
+
+    .number-item .num[data-n="1"] { color: #3498db; }
+    .number-item .num[data-n="2"] { color: #27ae60; }
+    .number-item .num[data-n="3"] { color: #e74c3c; }
+    .number-item .num[data-n="4"] { color: #9b59b6; }
+    .number-item .num[data-n="5"] { color: #e67e22; }
+    .number-item .num[data-n="6"] { color: #1abc9c; }
+    .number-item .num[data-n="7"] { color: #34495e; }
+    .number-item .num[data-n="8"] { color: #95a5a6; }
+
+    .number-item span:last-child {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.75rem;
+    }
+
     /* Mobile flag mode toggle */
     .flag-mode-toggle {
       display: none;
@@ -318,6 +544,8 @@
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
   </a>
 
+  <button class="help-btn" id="help-btn">?</button>
+
   <h1>Minesweeper</h1>
 
   <div class="difficulty-select">
@@ -351,6 +579,113 @@
     <h2 id="result-text">GAME OVER</h2>
     <p id="result-detail">You hit a mine!</p>
     <button id="play-again-btn">Play Again</button>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="help-modal" id="help-modal">
+    <div class="help-content">
+      <button class="help-close" id="help-close">&times;</button>
+      <div class="help-header">
+        <h2>How to Play</h2>
+      </div>
+      <div class="help-body">
+        <div class="help-section">
+          <h3>Goal</h3>
+          <p>Open all cells without hitting a mine! Numbers show how many mines are adjacent to that cell.</p>
+        </div>
+
+        <div class="help-section">
+          <h3>Controls</h3>
+          <div class="help-tabs">
+            <button class="help-tab active" data-tab="pc">PC</button>
+            <button class="help-tab" data-tab="mobile">Mobile</button>
+          </div>
+
+          <!-- PC Controls -->
+          <div class="help-panel active" id="panel-pc">
+            <div class="help-controls">
+              <div class="help-control">
+                <div class="help-control-icon">🖱️</div>
+                <div class="help-control-text">
+                  <strong>Left Click</strong>
+                  <span>Open a cell</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">🖱️</div>
+                <div class="help-control-text">
+                  <strong>Right Click</strong>
+                  <span>Place/remove a flag</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">😊</div>
+                <div class="help-control-text">
+                  <strong>Face Button</strong>
+                  <span>Restart the game</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Controls -->
+          <div class="help-panel" id="panel-mobile">
+            <div class="help-controls">
+              <div class="help-control">
+                <div class="help-control-icon">👆</div>
+                <div class="help-control-text">
+                  <strong>Tap</strong>
+                  <span>Open a cell (when Flag Mode is OFF)</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">🚩</div>
+                <div class="help-control-text">
+                  <strong>Flag Mode Button</strong>
+                  <span>Toggle between opening cells and placing flags</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">👆</div>
+                <div class="help-control-text">
+                  <strong>Tap (Flag Mode ON)</strong>
+                  <span>Place/remove a flag</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">😊</div>
+                <div class="help-control-text">
+                  <strong>Face Button</strong>
+                  <span>Restart the game</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>Number Colors</h3>
+          <p>Each number has a unique color:</p>
+          <div class="number-legend">
+            <div class="number-item"><span class="num" data-n="1">1</span><span>mine</span></div>
+            <div class="number-item"><span class="num" data-n="2">2</span><span>mines</span></div>
+            <div class="number-item"><span class="num" data-n="3">3</span><span>mines</span></div>
+            <div class="number-item"><span class="num" data-n="4">4</span><span>mines</span></div>
+            <div class="number-item"><span class="num" data-n="5">5</span><span>mines</span></div>
+            <div class="number-item"><span class="num" data-n="6">6</span><span>mines</span></div>
+            <div class="number-item"><span class="num" data-n="7">7</span><span>mines</span></div>
+            <div class="number-item"><span class="num" data-n="8">8</span><span>mines</span></div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>Tips</h3>
+          <p>Your first click is always safe - mines are placed after!</p>
+          <p>Use flags to mark cells you think contain mines.</p>
+          <p>The counter shows remaining mines (mines - flags placed).</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -642,6 +977,44 @@
 
     // Prevent context menu on board
     boardEl.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Help modal
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const helpClose = document.getElementById('help-close');
+
+    helpBtn.addEventListener('click', () => {
+      helpModal.classList.add('show');
+      // Auto-select the appropriate tab based on device
+      const isMobile = window.matchMedia('(pointer: coarse)').matches;
+      const targetTab = isMobile ? 'mobile' : 'pc';
+      document.querySelectorAll('.help-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === targetTab);
+      });
+      document.querySelectorAll('.help-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${targetTab}`);
+      });
+    });
+
+    helpClose.addEventListener('click', () => {
+      helpModal.classList.remove('show');
+    });
+
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        helpModal.classList.remove('show');
+      }
+    });
+
+    // Help tabs
+    document.querySelectorAll('.help-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.help-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.help-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
 
     // Initialize
     initGame();
