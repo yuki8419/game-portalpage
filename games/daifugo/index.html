@@ -1,0 +1,3527 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>大富豪 -DAIFUGO- | 3 vs 1</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* 明るいグリーンフェルトテーマ */
+      --bg-main: #1e8449;
+      --bg-felt: #27ae60;
+      --bg-dark: #196f3d;
+      --bg-card: #ffffff;
+      --bg-panel: rgba(255, 255, 255, 0.95);
+
+      --white: #ffffff;
+      --text-dark: #2c3e50;
+      --text-light: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+
+      --gold: #f1c40f;
+      --gold-dim: #d4ac0d;
+      --accent: #e74c3c;
+      --accent-light: #ec7063;
+      --success: #27ae60;
+      --info: #3498db;
+
+      --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.15);
+      --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #5d4037 0px, #5d4037 2px,
+          #4e342e 2px, #4e342e 20px
+        );
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      user-select: none;
+    }
+
+    /* ゲームテーブル（フレーム） */
+    .game-table {
+      width: 100%;
+      max-width: 700px;
+      min-height: 100vh;
+      background: linear-gradient(145deg, var(--bg-felt) 0%, var(--bg-main) 50%, var(--bg-dark) 100%);
+      border-radius: 20px;
+      border: 8px solid #3e2723;
+      box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.3),
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 4px #6d4c41;
+      display: flex;
+      flex-direction: column;
+      padding: 0.4rem;
+      gap: 0.3rem;
+      position: relative;
+      overflow: visible;
+    }
+
+    /* フェルトのテクスチャ */
+    .game-table::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
+    /* Navigation */
+    .nav-btn {
+      position: fixed;
+      top: 0.75rem;
+      width: 40px;
+      height: 40px;
+      background: var(--bg-panel);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      z-index: 1000;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .nav-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .home-btn { left: 0.75rem; }
+    .help-btn {
+      right: 0.75rem;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .home-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--text-dark);
+    }
+
+    /* Header - VS演出 */
+    .game-header {
+      position: absolute;
+      left: 1rem;
+      top: 1.2rem;
+      z-index: 10;
+      text-align: left;
+    }
+
+    h1 {
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      position: relative;
+      line-height: 1.15;
+      font-family: 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W6', 'Yu Gothic', 'YuGothic', 'Meiryo', sans-serif;
+      margin: 0;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.5rem 0.8rem 0.4rem 0.8rem;
+      border-radius: 12px;
+      border: 3px solid #ffd700;
+      box-shadow:
+        0 0 20px rgba(255, 215, 0, 0.4),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 .small {
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      text-shadow:
+        3px 3px 0 #000,
+        -1px -1px 0 #ffd700,
+        0 0 20px rgba(255, 255, 255, 0.6);
+    }
+
+    h1 .big {
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      text-shadow:
+        5px 5px 0 #000,
+        -2px -2px 0 #ffd700,
+        0 0 40px rgba(255, 255, 255, 0.8),
+        0 0 10px rgba(255, 215, 0, 0.6);
+      letter-spacing: 0.15em;
+    }
+
+    h1 .medium {
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      text-shadow:
+        4px 4px 0 #000,
+        -2px -2px 0 #ffd700,
+        0 0 30px rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.2em;
+    }
+
+    .subtitle {
+      display: none;
+    }
+
+    /* Difficulty - Clean pills */
+    .difficulty-selector {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.3rem;
+      z-index: 10;
+    }
+
+    .diff-btn {
+      padding: 0.25rem 0.6rem;
+      font-size: 0.55rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .diff-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--white);
+    }
+
+    .diff-btn.active {
+      background: rgba(255, 215, 0, 0.3);
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .diff-btn .diff-label { display: none; }
+
+    /* Main Game Area */
+    .game-container {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 0.3rem;
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Opponents - キャラクターカード */
+    .opponents-area {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.3rem;
+      padding-top: 0.8rem;
+      position: relative;
+    }
+
+    .opponent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      position: relative;
+      padding: 0.4rem 0.6rem 0.3rem;
+      background: var(--bg-panel);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      min-width: 95px;
+      transition: all 0.3s;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .opponent::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 14px;
+      z-index: -1;
+      opacity: 0.8;
+    }
+
+    .opponent.current-turn {
+      transform: scale(1.08);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+
+    .opponent.current-turn .opponent-avatar {
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .opponent.passed {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+
+    .opponent.finished {
+      border-color: var(--success);
+    }
+
+    .opponent.finished::before {
+      background: var(--success);
+      opacity: 0.2;
+    }
+
+    .opponent-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255,255,255,0.6);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .opponent-title {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+      margin-top: 0.15rem;
+    }
+
+    .opponent-name {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .opponent-cards {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin-top: 0.2rem;
+    }
+
+    .opponent-rank {
+      font-size: 0.55rem;
+      font-weight: 900;
+      padding: 0.1rem 0.3rem;
+      background: var(--gold);
+      color: #000;
+      border-radius: 8px;
+      margin-top: 0.15rem;
+    }
+
+    /* Speech bubbles - 漫画風吹き出し */
+    .speech-bubble {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: var(--white);
+      border: 3px solid #333;
+      border-radius: 12px;
+      padding: 0.4rem 0.6rem;
+      max-width: 95%;
+      width: max-content;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      font-size: 0.7rem;
+      line-height: 1.3;
+      word-break: break-word;
+      overflow: hidden;
+    }
+
+    .speech-bubble::after {
+      display: none;
+    }
+
+    .speech-bubble::before {
+      display: none;
+    }
+
+    .speech-bubble.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .speech-bubble.fade-out {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.95);
+      transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+    }
+
+    @keyframes bubblePop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+      50% { transform: translate(-50%, -50%) scale(1.15); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes bubbleShake {
+      0%, 100% { transform: translate(-50%, -50%) rotate(0); }
+      20% { transform: translate(-50%, -50%) rotate(-8deg); }
+      40% { transform: translate(-50%, -50%) rotate(8deg); }
+      60% { transform: translate(-50%, -50%) rotate(-5deg); }
+      80% { transform: translate(-50%, -50%) rotate(5deg); }
+    }
+
+    .speech-bubble.pop { animation: bubblePop 0.35s forwards; }
+
+    /* 怒り吹き出し - ギザギザ */
+    .speech-bubble.angry {
+      background: #fff0f0;
+      border-color: #dc2626;
+      border-width: 4px;
+      animation: bubblePop 0.3s forwards, bubbleShake 0.4s 0.3s;
+      box-shadow: 4px 4px 0 rgba(220, 38, 38, 0.4);
+    }
+    .speech-bubble.angry::after { border-bottom-color: #dc2626; }
+    .speech-bubble.angry::before { border-bottom-color: #fff0f0; }
+
+    /* 感心吹き出し - キラキラ */
+    .speech-bubble.impressed {
+      background: linear-gradient(135deg, #f0fff4 0%, #dcfce7 100%);
+      border-color: #16a34a;
+      box-shadow: 4px 4px 0 rgba(22, 163, 74, 0.3), 0 0 20px rgba(22, 163, 74, 0.2);
+    }
+    .speech-bubble.impressed::after { border-bottom-color: #16a34a; }
+    .speech-bubble.impressed::before { border-bottom-color: #dcfce7; }
+
+    .speech-text {
+      font-size: 0.75rem;
+      color: #1a1a1a;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: center;
+      text-shadow: none;
+    }
+
+    .speech-bubble.angry .speech-text {
+      color: #b91c1c;
+    }
+
+    .speech-bubble.impressed .speech-text {
+      color: #15803d;
+    }
+
+    /* Field Area - バトルフィールド */
+    .field-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 16px;
+      padding: 0.6rem;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.1);
+    }
+
+    .field-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      min-height: 70px;
+    }
+
+    .field-btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .field-label {
+      position: absolute;
+      top: 0.4rem;
+      left: 0.8rem;
+      font-size: 0.55rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+
+    .revolution-status {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.8rem;
+      font-size: 0.65rem;
+      color: var(--white);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      display: none;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      border: 2px solid #fbbf24;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+      animation: revolutionPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes revolutionPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .revolution-status.active { display: block; }
+
+    .field-cards {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: center;
+      min-width: 200px;
+    }
+
+    .field-info {
+      margin-top: 0.3rem;
+      font-size: 0.65rem;
+      color: var(--white);
+      font-weight: 600;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* Message */
+    .message {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--white);
+      font-weight: 600;
+      min-height: 1em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Player Area - ヒーローエリア */
+    .player-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 240, 255, 0.95) 100%);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 0.4rem 0.6rem;
+      position: relative;
+      box-shadow: 0 -5px 30px rgba(241, 196, 15, 0.3), 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .player-avatar {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 900;
+      color: var(--white);
+      border: 2px solid var(--gold);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .player-name {
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: #1d4ed8;
+      letter-spacing: 0.05em;
+    }
+
+    .player-status {
+      font-size: 0.6rem;
+      color: #1d4ed8;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 0.12rem 0.4rem;
+      border-radius: 8px;
+    }
+
+    .player-hand {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0.4rem 0.6rem;
+    }
+
+    /* Buttons - 漫画風 */
+    .btn {
+      padding: 0.5rem 1.4rem;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: var(--white);
+      border-color: #15803d;
+      box-shadow: 0 3px 0 #15803d, 0 5px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 #15803d, 0 8px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #15803d, 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: var(--white);
+      border-color: #b91c1c;
+      box-shadow: 0 3px 0 #b91c1c, 0 5px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 #b91c1c, 0 8px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-danger:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #b91c1c, 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Cards - トランプ風デザイン */
+    .card {
+      width: 58px;
+      height: 84px;
+      background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 100%);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    .card:hover { transform: translateY(-5px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2); }
+
+    .card.selected {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(241, 196, 15, 0.4), 0 0 0 2px var(--gold);
+    }
+
+    .card.field-card {
+      width: 64px;
+      height: 92px;
+      cursor: default;
+    }
+    .card.field-card:hover { transform: none; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+
+    /* カード内のレイアウト */
+    .card .corner-rank,
+    .card .corner-suit {
+      position: absolute;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .card .corner-rank {
+      top: 5px;
+      left: 6px;
+      font-size: 0.85rem;
+    }
+    .card .corner-suit {
+      top: 18px;
+      left: 6px;
+      font-size: 0.65rem;
+    }
+
+    .card .suit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .card .rank {
+      display: none; /* 中央ランクは非表示、corner-rankのみ使用 */
+    }
+
+    .card.red .corner-rank,
+    .card.red .corner-suit,
+    .card.red .suit { color: #dc3545; }
+
+    .card.black .corner-rank,
+    .card.black .corner-suit,
+    .card.black .suit { color: #1a1a2e; }
+
+    .card.joker {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 50%, #1a1a2e 100%);
+    }
+    .card.joker .corner-rank,
+    .card.joker .suit {
+      color: var(--gold);
+    }
+    .card.joker .corner-suit { display: none; }
+
+    /* カードプレイエフェクト - 集中線 */
+    .speed-lines {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 100vh;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 90;
+      opacity: 0;
+    }
+
+    .speed-lines.show {
+      animation: speedLinesFlash 0.5s ease-out forwards;
+    }
+
+    .speed-lines::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      transform: translate(-50%, -50%);
+      background: repeating-conic-gradient(
+        from 0deg,
+        transparent 0deg 8deg,
+        rgba(255, 255, 255, 0.1) 8deg 10deg
+      );
+    }
+
+    @keyframes speedLinesFlash {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* 衝撃波エフェクト */
+    .impact-wave {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      pointer-events: none;
+      z-index: 95;
+      opacity: 0;
+    }
+
+    .impact-wave.show {
+      animation: impactExpand 0.6s ease-out forwards;
+    }
+
+    .impact-wave::before,
+    .impact-wave::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      border: 4px solid var(--gold);
+    }
+
+    .impact-wave::after {
+      animation: impactRing 0.6s ease-out forwards;
+    }
+
+    @keyframes impactExpand {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(8); }
+    }
+
+    @keyframes impactRing {
+      0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); border-width: 4px; }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(12); border-width: 1px; }
+    }
+
+    /* Revolution indicator - 漫画風 */
+    .revolution-indicator {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--white);
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      border: 4px solid #fbbf24;
+      letter-spacing: 0.3em;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 0 0 8px rgba(220, 38, 38, 0.3), 8px 8px 0 rgba(0,0,0,0.3);
+      text-shadow: 3px 3px 0 #991b1b;
+    }
+
+    .revolution-indicator.show {
+      animation: revolutionBurst 1.8s ease-out forwards;
+    }
+
+    @keyframes revolutionBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) rotate(-15deg);
+      }
+      15% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
+      }
+      30% {
+        transform: translate(-50%, -50%) scale(1) rotate(-3deg);
+      }
+      45% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+      }
+      60% {
+        transform: translate(-50%, -50%) scale(1) rotate(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5) rotate(5deg);
+      }
+    }
+
+    /* 画面揺れ */
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-8px, -5px); }
+      20% { transform: translate(8px, 5px); }
+      30% { transform: translate(-6px, 4px); }
+      40% { transform: translate(6px, -4px); }
+      50% { transform: translate(-4px, 3px); }
+      60% { transform: translate(4px, -3px); }
+      70% { transform: translate(-2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      90% { transform: translate(-1px, 1px); }
+    }
+
+    body.screen-shake {
+      animation: screenShake 0.6s ease-out;
+    }
+
+    /* 赤い閃光 */
+    .red-flash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(220, 38, 38, 0.4) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 89;
+      opacity: 0;
+    }
+
+    .red-flash.show {
+      animation: redFlashPulse 0.8s ease-out forwards;
+    }
+
+    @keyframes redFlashPulse {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Start Screen Modal */
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 0.3s;
+      z-index: 600;
+    }
+
+    .start-overlay.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .start-content {
+      text-align: center;
+      padding: 1.5rem 1.5rem;
+      background: var(--bg-panel);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      max-width: 550px;
+      max-height: 90vh;
+      width: 90%;
+      overflow-y: auto;
+    }
+
+    .start-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+      line-height: 1.2;
+    }
+
+    .start-title .small { font-size: 0.85rem; display: block; }
+    .start-title .big { font-size: 2rem; display: block; }
+    .start-title .medium { font-size: 1.2rem; display: block; }
+
+    .start-description {
+      font-size: 0.75rem;
+      color: #666;
+      margin-bottom: 1.2rem;
+      line-height: 1.4;
+    }
+
+    .start-section {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+
+    .start-section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.6rem;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    .difficulty-options {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 0;
+    }
+
+    .difficulty-option {
+      flex: 1;
+      padding: 0.6rem 0.8rem;
+      background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+      border: 2px solid #9ca3af;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--text-dark);
+      box-shadow: 0 2px 0 #9ca3af;
+    }
+
+    .difficulty-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 #9ca3af;
+    }
+
+    .difficulty-option.selected {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      border-color: #d97706;
+      box-shadow: 0 2px 0 #d97706;
+      color: var(--white);
+    }
+
+    .rule-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .rule-option {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.8rem;
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .rule-option:hover {
+      border-color: #d1d5db;
+      background: #f3f4f6;
+    }
+
+    .rule-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #9ca3af;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      flex-shrink: 0;
+    }
+
+    .rule-option.selected .rule-checkbox {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border-color: #16a34a;
+    }
+
+    .rule-checkbox::after {
+      content: '✓';
+      color: white;
+      font-weight: 900;
+      font-size: 0.75rem;
+      opacity: 0;
+    }
+
+    .rule-option.selected .rule-checkbox::after {
+      opacity: 1;
+    }
+
+    .rule-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      flex: 1;
+      text-align: left;
+    }
+
+    .start-button {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border: 3px solid #15803d;
+      border-radius: 10px;
+      color: var(--white);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 3px 0 #15803d, 0 5px 10px rgba(0, 0, 0, 0.2);
+      margin-top: 0.5rem;
+    }
+
+    .start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #15803d, 0 8px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    .start-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 #15803d, 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Janken Modal */
+    .janken-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 550;
+    }
+
+    .janken-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .janken-content {
+      text-align: center;
+      padding: 2rem;
+      background: var(--bg-panel);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      min-width: 320px;
+    }
+
+    .janken-content h2 {
+      font-size: 1.2rem;
+      color: var(--text-dark);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      font-weight: 900;
+    }
+
+    .janken-opponent {
+      margin-bottom: 2rem;
+    }
+
+    .janken-opponent-avatar {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 0.8rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--white);
+      border: 3px solid var(--gold);
+    }
+
+    .janken-opponent-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .janken-choices {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .janken-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 0.8rem;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border: 2px solid #15803d;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 3px 0 #15803d, 0 5px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .janken-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #15803d, 0 8px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .janken-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 #15803d, 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .janken-icon {
+      font-size: 2rem;
+    }
+
+    .janken-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.05em;
+    }
+
+    .janken-result {
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-height: 2rem;
+      color: var(--text-dark);
+    }
+
+    .janken-dialogue {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      min-height: 2.5rem;
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background: #fff8e1;
+      border-radius: 10px;
+      border: 2px solid #ffd54f;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    @keyframes jankenShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px) rotate(-2deg); }
+      75% { transform: translateX(5px) rotate(2deg); }
+    }
+
+    @keyframes jankenPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .janken-opponent-avatar.shake {
+      animation: jankenShake 0.5s ease-in-out;
+    }
+
+    .janken-opponent-avatar.pulse {
+      animation: jankenPulse 0.6s ease-in-out;
+    }
+
+    /* Game over */
+    .game-over-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+      z-index: 500;
+    }
+
+    .game-over-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .game-over-content {
+      text-align: center;
+      padding: 2rem;
+      background: var(--bg-panel);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      min-width: 280px;
+    }
+
+    .game-over-content h2 {
+      font-size: 1.3rem;
+      color: var(--text-dark);
+      letter-spacing: 0.15em;
+      margin-bottom: 1.5rem;
+    }
+
+    .results-list {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .results-list li {
+      padding: 0.6rem 0;
+      font-size: 0.85rem;
+      color: var(--text-dark);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .results-list li:first-child {
+      color: var(--gold-dim);
+      font-weight: 700;
+    }
+
+    /* Help modal */
+    .help-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 600;
+    }
+
+    .help-modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .help-content {
+      background: var(--bg-panel);
+      border: none;
+      border-radius: 16px;
+      max-width: 400px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .help-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      color: var(--white);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .help-close:hover {
+      background: #c0392b;
+      transform: scale(1.1);
+    }
+
+    .help-header {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .help-header h2 {
+      font-size: 1rem;
+      color: var(--text-dark);
+      letter-spacing: 0.1em;
+    }
+
+    .help-body {
+      padding: 1rem;
+    }
+
+    .help-section {
+      margin-bottom: 1rem;
+    }
+
+    .help-section h3 {
+      font-size: 0.75rem;
+      color: var(--success);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .help-section p {
+      font-size: 0.7rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+
+    .help-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .help-tab {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.65rem;
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      border-radius: 15px;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .help-tab.active {
+      background: var(--success);
+      color: var(--white);
+    }
+
+    .help-panel {
+      display: none;
+    }
+
+    .help-panel.active {
+      display: block;
+    }
+
+    .help-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .help-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .help-control-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--info);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .help-control-text {
+      font-size: 0.65rem;
+      color: var(--text-dark);
+      opacity: 0.8;
+    }
+
+    .help-control-text strong {
+      color: var(--text-dark);
+      display: block;
+      opacity: 1;
+    }
+
+    .special-rules {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .special-rule {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .special-rule-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      flex-shrink: 0;
+      color: var(--text-dark);
+    }
+
+    .special-rule-text {
+      font-size: 0.65rem;
+      color: var(--text-dark);
+      line-height: 1.5;
+      opacity: 0.8;
+    }
+
+    .special-rule-text strong {
+      color: var(--accent);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+        letter-spacing: 0.1em;
+      }
+
+      .nav-btn {
+        width: 36px;
+        height: 36px;
+      }
+
+      .card {
+        width: 40px;
+        height: 56px;
+      }
+
+      .card .suit {
+        font-size: 1.1rem;
+      }
+
+      .card .corner-rank {
+        font-size: 0.6rem;
+        top: 3px;
+        left: 4px;
+      }
+
+      .card .corner-suit {
+        font-size: 0.45rem;
+        top: 11px;
+        left: 4px;
+      }
+
+      .card.field-card {
+        width: 46px;
+        height: 64px;
+      }
+
+      .opponents-area {
+        gap: 0.5rem;
+        padding-top: 2.5rem;
+      }
+
+      .opponent {
+        min-width: 60px;
+        padding: 0.4rem 0.6rem;
+      }
+
+      .opponent-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.6rem;
+      }
+
+      .opponent-name {
+        font-size: 0.55rem;
+      }
+
+      .field-area {
+        min-height: 90px;
+        padding: 0.5rem;
+      }
+
+      .player-area {
+        padding: 0.5rem 0.6rem;
+      }
+
+      .player-hand {
+        min-height: 50px;
+        gap: 2px;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.7rem;
+      }
+
+      .diff-btn {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.6rem;
+      }
+
+      .speech-bubble {
+        min-width: 70px;
+        max-width: 110px;
+        padding: 0.3rem 0.5rem;
+      }
+
+      .speech-text {
+        font-size: 0.55rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a href="../../" class="nav-btn home-btn">
+    <svg viewBox="0 0 24 24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+    </svg>
+  </a>
+
+  <button class="nav-btn help-btn" id="help-btn">?</button>
+
+  <div class="game-table">
+  <header class="game-header">
+    <h1>
+      <span class="small">3人の</span><br>
+      <span class="big">大富豪</span><br>
+      <span class="medium">VS俺</span>
+    </h1>
+  </header>
+
+  <div class="difficulty-selector">
+    <button class="diff-btn" data-difficulty="easy">
+      やさしい
+      <span class="diff-label">CPU弱め</span>
+    </button>
+    <button class="diff-btn active" data-difficulty="normal">
+      ふつう
+      <span class="diff-label">標準</span>
+    </button>
+    <button class="diff-btn" data-difficulty="hard">
+      むずかしい
+      <span class="diff-label">CPU強め</span>
+    </button>
+  </div>
+
+  <div class="game-container">
+    <div class="opponents-area" id="opponents-area"></div>
+
+    <div class="field-area">
+      <span class="field-label">FIELD</span>
+      <span class="revolution-status" id="revolution-status">革命中</span>
+      <span class="revolution-status" id="shibari-status" style="top: 2rem;">縛り中</span>
+      <div class="field-content">
+        <button class="btn btn-primary field-btn" id="play-btn" disabled>出す</button>
+        <div class="field-cards" id="field-cards"></div>
+        <button class="btn btn-danger field-btn" id="pass-btn" disabled>パス</button>
+      </div>
+      <div class="field-info" id="field-info"></div>
+    </div>
+
+    <p class="message" id="message"></p>
+
+    <div class="player-area">
+      <div class="player-header">
+        <div class="player-info">
+          <div class="player-avatar">YOU</div>
+          <span class="player-name" id="player-name">あなた</span>
+        </div>
+        <span class="player-status" id="player-status"></span>
+      </div>
+      <div class="player-hand" id="player-hand"></div>
+    </div>
+  </div>
+  </div><!-- /.game-table -->
+
+  <div class="revolution-indicator" id="revolution-indicator">革命!</div>
+  <div class="revolution-indicator" id="shibari-indicator">縛り!</div>
+  <div class="speed-lines" id="speed-lines"></div>
+  <div class="impact-wave" id="impact-wave"></div>
+  <div class="red-flash" id="red-flash"></div>
+
+  <!-- Start Screen Modal -->
+  <div class="start-overlay" id="start-modal">
+    <div class="start-content">
+      <div class="start-title">
+        <span class="small">3人の</span>
+        <span class="big">大富豪</span>
+        <span class="medium">VS俺</span>
+      </div>
+      <div class="start-description">
+        いちいちうるさい3人のCPUと大富豪で対決！<br>
+        難易度とルールを選んでゲームスタート！
+      </div>
+
+      <div class="start-section">
+        <div class="start-section-title">難易度選択</div>
+        <div class="difficulty-options">
+          <div class="difficulty-option" data-difficulty="easy">
+            かんたん
+          </div>
+          <div class="difficulty-option selected" data-difficulty="normal">
+            ふつう
+          </div>
+          <div class="difficulty-option" data-difficulty="hard">
+            むずかしい
+          </div>
+        </div>
+      </div>
+
+      <div class="start-section">
+        <div class="start-section-title">ルール設定</div>
+        <div class="rule-options">
+          <div class="rule-option selected" data-rule="revolution">
+            <div class="rule-checkbox"></div>
+            <div class="rule-label">革命（4枚以上で強弱逆転）</div>
+          </div>
+          <div class="rule-option selected" data-rule="8kiri">
+            <div class="rule-checkbox"></div>
+            <div class="rule-label">8切り（8で場を流す）</div>
+          </div>
+          <div class="rule-option" data-rule="shibari">
+            <div class="rule-checkbox"></div>
+            <div class="rule-label">縛り（同じマークで縛り）</div>
+          </div>
+          <div class="rule-option" data-rule="spade3Killer">
+            <div class="rule-checkbox"></div>
+            <div class="rule-label">♠3でジョーカー殺し</div>
+          </div>
+          <div class="rule-option" data-rule="elevenBack">
+            <div class="rule-checkbox"></div>
+            <div class="rule-label">イレブンバック（J逆転）</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="start-button" id="start-game-btn">ゲームスタート！</button>
+    </div>
+  </div>
+
+  <!-- Janken Modal -->
+  <div class="janken-overlay" id="janken-modal">
+    <div class="janken-content">
+      <h2>じゃんけんで先攻を決めよう！</h2>
+      <div class="janken-opponent" id="janken-opponent">
+        <div class="janken-opponent-avatar" id="janken-opponent-avatar"></div>
+        <div class="janken-opponent-name" id="janken-opponent-name"></div>
+      </div>
+      <div class="janken-choices">
+        <button class="janken-btn" data-choice="rock">
+          <span class="janken-icon">✊</span>
+          <span class="janken-label">グー</span>
+        </button>
+        <button class="janken-btn" data-choice="paper">
+          <span class="janken-icon">✋</span>
+          <span class="janken-label">パー</span>
+        </button>
+        <button class="janken-btn" data-choice="scissors">
+          <span class="janken-icon">✌️</span>
+          <span class="janken-label">チョキ</span>
+        </button>
+      </div>
+      <div class="janken-result" id="janken-result"></div>
+      <div class="janken-dialogue" id="janken-dialogue"></div>
+    </div>
+  </div>
+
+  <div class="game-over-overlay" id="game-over">
+    <div class="game-over-content">
+      <h2>ゲーム終了</h2>
+      <ul class="results-list" id="results-list"></ul>
+      <button class="btn btn-primary" id="play-again-btn">もう一度遊ぶ</button>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="help-modal" id="help-modal">
+    <div class="help-content">
+      <button class="help-close" id="help-close">&times;</button>
+      <div class="help-header">
+        <h2>遊び方</h2>
+      </div>
+      <div class="help-body">
+        <div class="help-section">
+          <h3>ゲームの目的</h3>
+          <p>手札を一番早くなくした人が勝ち！順位によって「大富豪」「富豪」「貧民」「大貧民」が決まります。</p>
+        </div>
+
+        <div class="help-section">
+          <h3>操作方法</h3>
+          <div class="help-tabs">
+            <button class="help-tab active" data-tab="pc">PC</button>
+            <button class="help-tab" data-tab="mobile">スマホ</button>
+          </div>
+          <div class="help-panel active" id="panel-pc">
+            <div class="help-controls">
+              <div class="help-control">
+                <div class="help-control-icon">1</div>
+                <div class="help-control-text">
+                  <strong>クリック</strong>
+                  <span>カードを選択／選択解除</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">2</div>
+                <div class="help-control-text">
+                  <strong>「出す」ボタン</strong>
+                  <span>選択したカードを場に出す</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">3</div>
+                <div class="help-control-text">
+                  <strong>「パス」ボタン</strong>
+                  <span>カードを出さずにターンを終了</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="help-panel" id="panel-mobile">
+            <div class="help-controls">
+              <div class="help-control">
+                <div class="help-control-icon">1</div>
+                <div class="help-control-text">
+                  <strong>タップ</strong>
+                  <span>カードを選択／選択解除</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">2</div>
+                <div class="help-control-text">
+                  <strong>「出す」ボタン</strong>
+                  <span>選択したカードを場に出す</span>
+                </div>
+              </div>
+              <div class="help-control">
+                <div class="help-control-icon">3</div>
+                <div class="help-control-text">
+                  <strong>「パス」ボタン</strong>
+                  <span>カードを出さずにターンを終了</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>カードの強さ</h3>
+          <p>数字が大きいほど強い。2が最強、3が最弱です。</p>
+          <div class="card-strength">
+            <span class="card-strength-item weak">3</span>
+            <span class="card-strength-arrow">→</span>
+            <span class="card-strength-item">...</span>
+            <span class="card-strength-arrow">→</span>
+            <span class="card-strength-item">K</span>
+            <span class="card-strength-arrow">→</span>
+            <span class="card-strength-item">A</span>
+            <span class="card-strength-arrow">→</span>
+            <span class="card-strength-item strong">2</span>
+            <span class="card-strength-arrow">→</span>
+            <span class="card-strength-item strong">JKR</span>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>基本ルール</h3>
+          <div class="help-controls">
+            <div class="help-control">
+              <div class="help-control-icon">A</div>
+              <div class="help-control-text">
+                <strong>カードを出す</strong>
+                <span>場より強いカードを、同じ枚数だけ出せる</span>
+              </div>
+            </div>
+            <div class="help-control">
+              <div class="help-control-icon">B</div>
+              <div class="help-control-text">
+                <strong>場が流れる</strong>
+                <span>全員パスで場がリセット。最後に出した人が親</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>特殊ルール</h3>
+          <div class="special-rule">
+            <div class="special-rule-icon">R</div>
+            <div class="special-rule-text">
+              <strong>革命</strong>：同じ数字を4枚出すと強さが逆転！（3が最強、2が最弱に）
+            </div>
+          </div>
+          <div class="special-rule">
+            <div class="special-rule-icon">8</div>
+            <div class="special-rule-text">
+              <strong>8切り</strong>：8を出すと場が流れ、出した人が次の親になる
+            </div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <h3>難易度</h3>
+          <div class="help-controls">
+            <div class="help-control">
+              <div class="help-control-icon">E</div>
+              <div class="help-control-text">
+                <strong>やさしい</strong>
+                <span>CPUがランダムにカードを出す</span>
+              </div>
+            </div>
+            <div class="help-control">
+              <div class="help-control-icon">N</div>
+              <div class="help-control-text">
+                <strong>ふつう</strong>
+                <span>CPUが弱いカードから順に出す</span>
+              </div>
+            </div>
+            <div class="help-control">
+              <div class="help-control-icon">H</div>
+              <div class="help-control-text">
+                <strong>むずかしい</strong>
+                <span>CPUが戦略的にカードを選ぶ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Card constants
+    const SUITS = ['♠', '♥', '♦', '♣'];
+    const RANKS = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2'];
+    const RANK_VALUES = {
+      '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+      'J': 11, 'Q': 12, 'K': 13, 'A': 14, '2': 15, 'JOKER': 16
+    };
+
+    // CPU Character data - 漢字アバターでキャラ表現
+    const CPU_CHARACTERS = [
+      {
+        name: '財前',
+        avatar: '財',
+        title: '財閥御曹司',
+        personality: 'arrogant', // 傲慢な金持ち
+        color: '#6b21a8', // 紫
+        accent: '#fbbf24', // 金
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%)'
+      },
+      {
+        name: 'アラブ',
+        avatar: '油',
+        title: '石油王',
+        personality: 'rich_arrogant', // 豪快な成金
+        color: '#d4af37', // 金色
+        accent: '#1f2937', // 黒
+        gradient: 'linear-gradient(135deg, #d4af37 0%, #aa8c2e 100%)'
+      },
+      {
+        name: 'F',
+        avatar: '帝',
+        title: '宇宙の帝王',
+        personality: 'emperor', // 冷酷な帝王（フリーザタイプ）
+        color: '#7c3aed', // 紫
+        accent: '#f3f4f6', // 白
+        gradient: 'linear-gradient(135deg, #a855f7 0%, #6b21a8 100%)'
+      }
+    ];
+
+    // Game state
+    let players = [];
+    let currentPlayerIndex = 0;
+    let fieldCards = [];
+    let previousFieldCards = []; // 前のターンの場のカード（縛り判定用）
+    let lastPlayedBy = -1;
+    let passCount = 0;
+    let gameActive = false;
+    let selectedCards = [];
+    let finishOrder = [];
+    let revolution = false;
+    let difficulty = 'normal';
+    let isInitialDeal = false;
+    let enableRevolution = true;
+    let enable8Kiri = true;
+    let enableShibari = false;
+    let enableSpade3Killer = false;
+    let enableElevenBack = false;
+    let isShibariActive = false;
+    let isElevenBackActive = false; // イレブンバックの一時的な逆転状態
+
+    // DOM elements
+    const opponentsArea = document.getElementById('opponents-area');
+    const fieldCardsEl = document.getElementById('field-cards');
+    const fieldInfoEl = document.getElementById('field-info');
+    const playerHandEl = document.getElementById('player-hand');
+    const playerNameEl = document.getElementById('player-name');
+    const playerStatusEl = document.getElementById('player-status');
+    const playBtn = document.getElementById('play-btn');
+    const passBtn = document.getElementById('pass-btn');
+    const messageEl = document.getElementById('message');
+    const gameOverEl = document.getElementById('game-over');
+    const resultsListEl = document.getElementById('results-list');
+    const revolutionIndicator = document.getElementById('revolution-indicator');
+    const shibariIndicator = document.getElementById('shibari-indicator');
+    const revolutionStatus = document.getElementById('revolution-status');
+    const shibariStatus = document.getElementById('shibari-status');
+    const speedLines = document.getElementById('speed-lines');
+    const impactWave = document.getElementById('impact-wave');
+    const redFlash = document.getElementById('red-flash');
+    const startModal = document.getElementById('start-modal');
+    const jankenModal = document.getElementById('janken-modal');
+    const jankenOpponentAvatar = document.getElementById('janken-opponent-avatar');
+    const jankenOpponentName = document.getElementById('janken-opponent-name');
+    const jankenResult = document.getElementById('janken-result');
+
+    // エフェクト関数
+    function showSpeedLines() {
+      speedLines.classList.remove('show');
+      void speedLines.offsetWidth;
+      speedLines.classList.add('show');
+      setTimeout(() => speedLines.classList.remove('show'), 500);
+    }
+
+    function showImpactWave() {
+      impactWave.classList.remove('show');
+      void impactWave.offsetWidth;
+      impactWave.classList.add('show');
+      setTimeout(() => impactWave.classList.remove('show'), 600);
+    }
+
+    function showRedFlash() {
+      redFlash.classList.remove('show');
+      void redFlash.offsetWidth;
+      redFlash.classList.add('show');
+      setTimeout(() => redFlash.classList.remove('show'), 800);
+    }
+
+    function triggerScreenShake() {
+      document.body.classList.remove('screen-shake');
+      void document.body.offsetWidth;
+      document.body.classList.add('screen-shake');
+      setTimeout(() => document.body.classList.remove('screen-shake'), 600);
+    }
+
+    // カードプレイ時のエフェクト
+    function showPlayEffect(cards, isRevolution = false) {
+      const cardValue = getEffectiveValue(cards[0].value);
+      const isStrong = cardValue >= 13 || cards[0].rank === 'JOKER';
+
+      // 基本エフェクト（集中線）
+      showSpeedLines();
+
+      // 強いカードには衝撃波も追加
+      if (isStrong || cards.length >= 3) {
+        setTimeout(() => showImpactWave(), 100);
+      }
+
+      // 革命時は画面揺れ＋赤い閃光
+      if (isRevolution) {
+        showRedFlash();
+        triggerScreenShake();
+      }
+    }
+
+    // Speech bubble state
+    const activeBubbles = new Map(); // playerIndex -> timeout
+
+    // Character dialogues
+    const CHARACTER_DIALOGUES = {
+      arrogant: {
+        // 財前 - 傲慢な金持ち
+        play: [
+          'ふん、貴様には到底無理だな',
+          'この財前様の力、思い知るがいい',
+          '下郎が、身の程を知れ',
+          '貴様ごときが私に勝てるとでも？'
+        ],
+        pass: [
+          'チッ...貴様に譲ってやる',
+          'ふん、今回だけは見逃してやろう',
+          'くだらん...調子に乗るなよ',
+          'まあいい、次で叩き潰す'
+        ],
+        finish: [
+          'ふはは！やはり私が一番か！',
+          '当然の結果だ。格が違うのだよ、格が',
+          '見たか下郎！これが実力の差だ！',
+          'ふん、貴様では私の相手にもならん'
+        ],
+        reactWeak: [
+          'ハッ！その程度か、笑わせるな',
+          'ふん、貧弱だな。貴様らしいわ',
+          'それで勝てると？愚かな',
+          '哀れだな...見ていて情けない'
+        ],
+        reactStrong: [
+          'チッ...小癪な',
+          'ほう...少しは見どころがあるな',
+          'ぐぬ...生意気な真似を',
+          'フン、まぐれだろう'
+        ],
+        reactRevolution: [
+          'な、なんだと!? 貴様...！',
+          'バカな！まさか貴様が革命を...',
+          'くっ...調子に乗るなよ！'
+        ],
+        reactPass: [
+          'ハッ、逃げたか',
+          'ふん、諦めたようだな',
+          '賢明な判断だ、貴様には無理だ'
+        ]
+      },
+      rich_arrogant: {
+        // アブドゥル - 豪快な成金
+        play: [
+          'ハハハ！貴様には無理だ！',
+          'フハハハ！見ておれ、これが富の力だ！',
+          '貴様ごときが私に勝てると思うな！',
+          '金で買えないものはない！貴様の勝利もな！'
+        ],
+        pass: [
+          'フン、貴様に花を持たせてやろう',
+          'まあいい、調子に乗るなよ？',
+          'チッ...今だけだ、喜んでおけ',
+          '次は容赦せんぞ'
+        ],
+        finish: [
+          'ハーッハッハッハ！当然の結果だ！',
+          'フハハ！貴様では私に勝てん！',
+          '見たか！これが石油王の実力だ！',
+          '金も実力も私が上だ！'
+        ],
+        reactWeak: [
+          'ハハハ！その程度か！笑わせるな！',
+          'フン、貧弱な手だな！貴様らしいわ！',
+          'それで勝てると思ったのか？甘いぞ！',
+          '哀れだな...見ていて可哀想になるわ！'
+        ],
+        reactStrong: [
+          'ほう...生意気な！',
+          'フン、小癪な真似を！',
+          'やるではないか...だが私には及ばん！',
+          'ほう、少しは楽しめそうだ'
+        ],
+        reactRevolution: [
+          'な、なんだと!? 貴様...！',
+          'バカな！まさか革命だと!?',
+          'ぐぬぬ...調子に乗るなよ！'
+        ],
+        reactPass: [
+          'ハハハ！やはり無理だったか！',
+          'フハハ、諦めたか貴様',
+          '賢い選択だ、貴様には不可能だからな'
+        ]
+      },
+      emperor: {
+        // F - 冷酷な帝王
+        play: [
+          'ほほほ...私の勝ちですよ',
+          'フフフ...見事なものでしょう？',
+          'まあ、当然の結果ですね',
+          'はじめてですよ、この私にここまで楽しませてくれたのは',
+          'ですが、もちろんフルパワーで闘う気はありませんからご心配なく',
+          'ほほほ...お気の毒に',
+          'おやおや、もう終わりですか？',
+          'まあ、つまらないですね'
+        ],
+        pass: [
+          'おやおや...仕方ありませんね',
+          'まあ、これは少々厄介ですね',
+          'ほほほ...ここは様子見といきましょう',
+          '次のお楽しみですね',
+          'おやおや...少々面倒ですね'
+        ],
+        finish: [
+          'ほーっほっほっほ！完璧ですね',
+          'ほほほ...やはり私が一番ですね',
+          'まあ、当然の結果です',
+          '私の戦闘力は530000です。ご覧の通りですよ',
+          'これが実力の差というものです'
+        ],
+        reactWeak: [
+          'ほほほ...その程度ですか',
+          'おやおや、可哀想に',
+          'まあ、お気の毒ですね',
+          'それでは私には勝てませんよ',
+          'おやおや...話になりませんね',
+          'まあ...見ていて哀れですね',
+          '殺しますよ'
+        ],
+        reactStrong: [
+          'おや...やりますね',
+          'これは...少々面白い',
+          'ほほほ...中々ですね',
+          'ふむ...侮れませんね',
+          'おやおや、少しは楽しめそうですね',
+          '本気を出させていただきますよ',
+          '私をここまでコケにしたおバカさんは...あなたがはじめてですよ'
+        ],
+        reactRevolution: [
+          'な、なんですって!?',
+          'これは想定外ですね...おやおや',
+          'ほほほ...面白くなってきましたね',
+          '許しませんよ...絶対に'
+        ],
+        reactPass: [
+          'ほほほ...お諦めですか',
+          'おやおや、もうギブアップですか？',
+          'まあ、賢明な判断ですね'
+        ]
+      }
+    };
+
+    // Victory演出 dialogues based on player rank
+    const VICTORY_DIALOGUES = {
+      rank1: {
+        // プレイヤーが1位 - 長い醜い口喧嘩
+        arguments: [
+          '財前「な、なんだと!? バカな！この私が...負けた...だと！？」',
+          'アラブ「ハハハ...まさか貴様にやられるとは...」',
+          'F「おやおや...負けてしまいましたね」',
+          '財前「おいF！お前のせいだ！お前が変な手を出したせいで...！」',
+          'F「まあ！失礼ですね。あなたこそジョーカーを無駄にしたではありませんか」',
+          '財前「何だと！？ あれは戦略的判断だ！貴様のような...」',
+          'アラブ「待て待て...我々が内輪揉めしている場合では...」',
+          'F「ほほほ...アラブさん、あなたもずっと『金の力だ』とか仰ってましたね」',
+          'アラブ「ぐっ...！それは貴様らが協力しなかったからだ！」',
+          '財前「は？お前の戦略など最初から破綻していたわ！」',
+          'F「ほーっほっほっほ！まあ、アラブさんのせいですね」',
+          'アラブ「な、なんだと！？貴様ら...この私を愚弄するか！」',
+          '財前「現に負けたではないか！」',
+          'F「まあ、お気の毒に...ほほほ」',
+          'アラブ「貴様ら...！覚えておれ...！」',
+          '財前「くっ...屈辱だ...この財前が...」',
+          'F「おやおや、お二人とも...そんなに悔しいのですか？ほほほ...」'
+        ]
+      },
+      rank2: {
+        // プレイヤーが2位
+        winner: {
+          arrogant: '財前「ふはは！やはり私が一番か！2位、まあ悪くはないぞ」',
+          rich_arrogant: 'アラブ「ハハハ！見事だが、私には及ばなかったな」',
+          emperor: 'F「ほーっほっほっほ！私の勝ちですね！まあ2位も立派ですよ」'
+        },
+        reactions: [
+          '財前「ふん、2位とは...許容範囲だ」',
+          'アラブ「2位...悪くない。次は必ず勝つ」',
+          'F「まあ、2位とは...次は頂きますよ」'
+        ]
+      },
+      rank3: {
+        // プレイヤーが3位
+        reactions: [
+          '財前「ふはは！2位以上は約束されていたようなものだ」',
+          'アラブ「ハハハ、この結果は予想通りだな」',
+          'F「ほほほ...最下位でなくて良かったですね」',
+          '財前「3位か...まあビリよりはマシだな」',
+          'F「まあ、3位...許容範囲です」'
+        ]
+      },
+      rank4: {
+        // プレイヤーが最下位
+        mockery: [
+          '財前「ふはははは！貧民よ、来世に期待するのだな！」',
+          'アラブ「ハハハ...これが現実だ。まだまだ甘いな」',
+          'F「ほーっほっほっほ！最下位ですね！お気の毒に！」',
+          '財前「最下位とはな...哀れなものだ」',
+          'F「おやおや、最下位とはどんなお気持ちですか？ほほほ」',
+          'アラブ「フハハ、まあ初心者にはこの程度が限界か」',
+          '財前「私のカードでも磨いておけ、大貧民」',
+          'F「来世に期待しておりますよ。ほーっほっほっほ！」',
+          'アラブ「...まあ、次は頑張れ。ハハハ」',
+          'F「まあ...本当にお弱いのですね。ほほほ」'
+        ]
+      }
+    };
+
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    function getRandomDialogue(personality, action) {
+      const dialogues = CHARACTER_DIALOGUES[personality];
+      if (!dialogues || !dialogues[action]) return null;
+      const list = dialogues[action];
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    // Show speech bubble for a specific opponent
+    function showSpeechBubble(playerIndex, text, mood = 'normal', duration = 2500) {
+      const opponentDiv = opponentsArea.children[playerIndex - 1]; // -1 because player is index 0
+      if (!opponentDiv) return;
+
+      // Clear existing bubble timeouts
+      if (activeBubbles.has(playerIndex)) {
+        const timers = activeBubbles.get(playerIndex);
+        if (timers.timeout) clearTimeout(timers.timeout);
+        if (timers.fadeTimeout) clearTimeout(timers.fadeTimeout);
+      }
+
+      // Find or create bubble
+      let bubble = opponentDiv.querySelector('.speech-bubble');
+      if (!bubble) {
+        bubble = document.createElement('div');
+        bubble.className = 'speech-bubble';
+        bubble.innerHTML = '<span class="speech-text"></span>';
+        opponentDiv.appendChild(bubble);
+      }
+
+      const textEl = bubble.querySelector('.speech-text');
+      textEl.textContent = text;
+
+      // Reset classes
+      bubble.className = 'speech-bubble';
+      void bubble.offsetWidth; // Trigger reflow
+
+      // Add mood and animation
+      if (mood === 'angry') {
+        bubble.classList.add('angry');
+      } else if (mood === 'impressed') {
+        bubble.classList.add('impressed');
+      } else {
+        bubble.classList.add('pop');
+      }
+      bubble.classList.add('show');
+
+      // Start fade-out before full duration
+      const fadeStartTime = duration - 1500; // Start fading 1.5s before end
+      const fadeTimeout = setTimeout(() => {
+        bubble.classList.add('fade-out');
+      }, fadeStartTime);
+
+      // Hide after duration
+      const timeout = setTimeout(() => {
+        bubble.classList.remove('show', 'pop', 'angry', 'impressed', 'fade-out');
+        activeBubbles.delete(playerIndex);
+      }, duration);
+
+      activeBubbles.set(playerIndex, { timeout, fadeTimeout });
+    }
+
+    // Determine reaction probability and who reacts
+    async function showCPUReactions(cards, isRevolution = false) {
+      const cpuPlayers = players.map((p, i) => ({ ...p, index: i })).filter(p => !p.isHuman && !p.finished);
+      if (cpuPlayers.length === 0) return;
+
+      const cardValue = getEffectiveValue(cards[0].value);
+      const isStrong = cardValue >= 13;
+      const cardCount = cards.length;
+
+      // Higher probability for stronger plays
+      let baseChance = isStrong ? 0.7 : 0.4;
+      if (isRevolution) baseChance = 1.0;
+      if (cardCount >= 3) baseChance += 0.2;
+
+      // Revolution - everyone reacts!
+      if (isRevolution) {
+        for (let i = 0; i < cpuPlayers.length; i++) {
+          const cpu = cpuPlayers[i];
+          const dialogue = getRandomDialogue(cpu.personality, 'reactRevolution');
+          if (dialogue) {
+            setTimeout(() => {
+              showSpeechBubble(cpu.index, dialogue, 'angry', 5500);
+            }, i * 600); // 0.6秒ずつずらす
+          }
+        }
+        await wait(2500);
+      } else {
+        // Normal reaction - ALL characters react with delays
+        const actionType = isStrong ? 'reactStrong' : 'reactWeak';
+        const mood = isStrong ? 'impressed' : 'angry';
+
+        // Show all CPU reactions with staggered delays
+        for (let i = 0; i < cpuPlayers.length; i++) {
+          const cpu = cpuPlayers[i];
+          const dialogue = getRandomDialogue(cpu.personality, actionType);
+          if (dialogue) {
+            setTimeout(() => {
+              showSpeechBubble(cpu.index, dialogue, mood, 5000);
+            }, i * 500); // 0.5秒ずつずらす
+          }
+        }
+
+        await wait(2200);
+      }
+    }
+
+    // Show CPU reactions when player passes
+    async function showCPUPassReactions() {
+      const cpuPlayers = players.map((p, i) => ({ ...p, index: i })).filter(p => !p.isHuman && !p.finished);
+      if (cpuPlayers.length === 0) return;
+
+      // All CPUs react to player passing
+      for (let i = 0; i < cpuPlayers.length; i++) {
+        const cpu = cpuPlayers[i];
+        const dialogue = getRandomDialogue(cpu.personality, 'reactPass');
+        if (dialogue) {
+          setTimeout(() => {
+            showSpeechBubble(cpu.index, dialogue, 'normal', 5000);
+          }, i * 500); // 0.5秒ずつずらす
+        }
+      }
+
+      await wait(2200);
+    }
+
+    async function playDialogue(text, duration = 1500) {
+      // For system messages, we'll show on all characters briefly
+      // This is mainly for "では、大富豪戦を始める！" type messages
+      await wait(duration);
+    }
+
+    // Janken (Rock-Paper-Scissors) to decide first turn
+    let jankenOpponentIndex = -1;
+    let jankenResolve = null;
+
+    async function playJanken() {
+      return new Promise((resolve) => {
+        jankenResolve = resolve;
+
+        // Select random CPU opponent
+        jankenOpponentIndex = Math.floor(Math.random() * 3) + 1;
+        const opponent = players[jankenOpponentIndex];
+
+        // Show janken modal
+        jankenOpponentAvatar.textContent = opponent.avatar;
+        jankenOpponentAvatar.style.background = opponent.gradient;
+        jankenOpponentName.textContent = opponent.name;
+        jankenResult.textContent = '';
+        jankenModal.classList.add('show');
+      });
+    }
+
+    // じゃんけんのセリフ
+    const JANKEN_DIALOGUES = {
+      arrogant: {
+        start: ['ふん、じゃんけん程度で勝った気でいるなよ', 'さっさと済ませようか'],
+        win: ['くっ...運が良かっただけだ！', 'チッ...仕方ない、やるか'],
+        lose: ['ふはは！やはり私の勝ちだな！', 'ふん、当然の結果だ'],
+        draw: ['チッ...もう一度だ']
+      },
+      rich_arrogant: {
+        start: ['ハハハ、じゃんけん程度で私に勝てると？', 'フハハ、さっさと始めるぞ'],
+        win: ['ぐぬぬ...運が良かっただけだ！', 'チッ...仕方ない、やってやろう'],
+        lose: ['ハーッハッハッハ！当然の結果だ！', 'フハハ！私の勝ちだな'],
+        draw: ['フン...もう一度だ']
+      },
+      emperor: {
+        start: ['ほほほ...じゃんけんですか', 'おやおや、遊びましょうか'],
+        win: ['おやおや...まあ、仕方ありませんね', 'ほほほ...少しは楽しめそうですね'],
+        lose: ['ほーっほっほっほ！私の勝ちですね', 'まあ、当然の結果です'],
+        draw: ['おやおや、あいこですか']
+      }
+    };
+
+    async function handleJankenChoice(playerChoice) {
+      const choices = ['rock', 'paper', 'scissors'];
+      const cpuChoice = choices[Math.floor(Math.random() * 3)];
+      const opponent = players[jankenOpponentIndex];
+      const jankenDialogue = document.getElementById('janken-dialogue');
+      const jankenAvatar = document.getElementById('janken-opponent-avatar');
+
+      const choiceNames = {
+        rock: 'グー',
+        paper: 'パー',
+        scissors: 'チョキ'
+      };
+
+      const choiceIcons = {
+        rock: '✊',
+        paper: '✋',
+        scissors: '✌️'
+      };
+
+      // じゃんけんアニメーション
+      jankenAvatar.classList.add('shake');
+      setTimeout(() => jankenAvatar.classList.remove('shake'), 500);
+
+      // 結果判定
+      let result = '';
+      let playerStarts = false;
+      let dialogueKey = '';
+
+      if (playerChoice === cpuChoice) {
+        result = `あいこ！(あなた: ${choiceIcons[playerChoice]} vs ${choiceIcons[cpuChoice]})`;
+        dialogueKey = 'draw';
+
+        const dialogue = JANKEN_DIALOGUES[opponent.personality][dialogueKey];
+        jankenDialogue.textContent = dialogue[Math.floor(Math.random() * dialogue.length)];
+
+        // Retry on draw
+        setTimeout(() => {
+          jankenResult.textContent = '';
+          jankenDialogue.textContent = '';
+        }, 1500);
+        return;
+      } else if (
+        (playerChoice === 'rock' && cpuChoice === 'scissors') ||
+        (playerChoice === 'paper' && cpuChoice === 'rock') ||
+        (playerChoice === 'scissors' && cpuChoice === 'paper')
+      ) {
+        result = `あなたの勝ち！(${choiceIcons[playerChoice]} vs ${choiceIcons[cpuChoice]})`;
+        playerStarts = true;
+        dialogueKey = 'win';
+        jankenAvatar.classList.add('shake');
+      } else {
+        result = `${opponent.name}の勝ち！(${choiceIcons[playerChoice]} vs ${choiceIcons[cpuChoice]})`;
+        playerStarts = false;
+        dialogueKey = 'lose';
+        jankenAvatar.classList.add('pulse');
+      }
+
+      jankenResult.textContent = result;
+
+      const dialogue = JANKEN_DIALOGUES[opponent.personality][dialogueKey];
+      jankenDialogue.textContent = dialogue[Math.floor(Math.random() * dialogue.length)];
+
+      // アニメーションクリーンアップ
+      setTimeout(() => {
+        jankenAvatar.classList.remove('shake', 'pulse');
+      }, 600);
+
+      // Close modal and resolve
+      setTimeout(() => {
+        jankenModal.classList.remove('show');
+        if (jankenResolve) {
+          jankenResolve(playerStarts);
+          jankenResolve = null;
+        }
+      }, 1500);
+    }
+
+    // Add event listeners for janken buttons
+    document.querySelectorAll('.janken-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const choice = btn.dataset.choice;
+        handleJankenChoice(choice);
+      });
+    });
+
+    // Create a deck of cards
+    function createDeck() {
+      const deck = [];
+      for (const suit of SUITS) {
+        for (const rank of RANKS) {
+          deck.push({ suit, rank, value: RANK_VALUES[rank] });
+        }
+      }
+      deck.push({ suit: '★', rank: 'JOKER', value: RANK_VALUES['JOKER'] });
+      deck.push({ suit: '★', rank: 'JOKER', value: RANK_VALUES['JOKER'] });
+      return deck;
+    }
+
+    function shuffleDeck(deck) {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      return deck;
+    }
+
+    function getEffectiveValue(value) {
+      if (!revolution) return value;
+      if (value === 16) return 16;
+      return 18 - value;
+    }
+
+    function sortCards(cards) {
+      return [...cards].sort((a, b) => {
+        const aVal = getEffectiveValue(a.value);
+        const bVal = getEffectiveValue(b.value);
+        if (aVal !== bVal) return aVal - bVal;
+        return SUITS.indexOf(a.suit) - SUITS.indexOf(b.suit);
+      });
+    }
+
+    function initGame() {
+      const deck = shuffleDeck(createDeck());
+
+      players = [
+        { name: 'あなた', hand: [], isHuman: true, passed: false, finished: false, rank: null, avatar: 'YOU', personality: 'player' },
+        { ...CPU_CHARACTERS[0], hand: [], isHuman: false, passed: false, finished: false, rank: null },
+        { ...CPU_CHARACTERS[1], hand: [], isHuman: false, passed: false, finished: false, rank: null },
+        { ...CPU_CHARACTERS[2], hand: [], isHuman: false, passed: false, finished: false, rank: null }
+      ];
+
+      let cardIndex = 0;
+      while (cardIndex < deck.length) {
+        for (let i = 0; i < players.length && cardIndex < deck.length; i++) {
+          players[i].hand.push(deck[cardIndex++]);
+        }
+      }
+
+      players.forEach(p => { p.hand = sortCards(p.hand); });
+
+      fieldCards = [];
+      previousFieldCards = [];
+      lastPlayedBy = -1;
+      passCount = 0;
+      gameActive = true;
+      selectedCards = [];
+      finishOrder = [];
+      revolution = false;
+      isShibariActive = false;
+
+      gameOverEl.classList.remove('show');
+      revolutionStatus.classList.remove('active');
+      shibariStatus.classList.remove('active');
+
+      isInitialDeal = true;
+      render();
+      isInitialDeal = false;
+
+      // Start game sequence
+      (async () => {
+        await wait(800);
+
+        // Play janken to decide first turn
+        const playerStarts = await playJanken();
+
+        if (playerStarts) {
+          currentPlayerIndex = 0;
+        } else {
+          // Random CPU starts
+          currentPlayerIndex = Math.floor(Math.random() * 3) + 1;
+        }
+
+        await wait(500);
+        render();
+        await wait(500);
+        await playDialogue('では、大富豪戦を始める！', 2000);
+
+        if (!players[currentPlayerIndex].isHuman) {
+          await wait(500);
+          await cpuTurn();
+        }
+      })();
+    }
+
+    function render() {
+      opponentsArea.innerHTML = '';
+      for (let i = 1; i < players.length; i++) {
+        const p = players[i];
+        const div = document.createElement('div');
+        div.className = 'opponent';
+        if (i === currentPlayerIndex && !p.finished) div.classList.add('current-turn');
+        if (p.passed) div.classList.add('passed');
+        if (p.finished) div.classList.add('finished');
+
+        // キャラクター固有の色を適用
+        div.style.borderColor = p.color;
+        div.style.setProperty('--char-color', p.color);
+        div.style.setProperty('--char-accent', p.accent);
+
+        div.innerHTML = `
+          <div class="opponent-avatar" style="background: ${p.gradient};">${p.avatar}</div>
+          <div class="opponent-title" style="color: ${p.color};">${p.title || ''}</div>
+          <div class="opponent-name" style="color: ${p.color};">${p.name}</div>
+          <div class="opponent-cards" style="color: ${p.color};">${p.finished ? '上がり!' : `${p.hand.length}枚`}</div>
+          ${p.rank ? `<div class="opponent-rank">${p.rank}</div>` : ''}
+        `;
+        opponentsArea.appendChild(div);
+      }
+
+      fieldCardsEl.innerHTML = '';
+      if (fieldCards.length > 0) {
+        fieldCards.forEach(card => {
+          fieldCardsEl.appendChild(createCardElement(card, true));
+        });
+      }
+
+      if (fieldCards.length > 0) {
+        const count = fieldCards.length;
+        const rankStr = fieldCards[0].rank === 'JOKER' ? 'ジョーカー' : fieldCards[0].rank;
+        fieldInfoEl.textContent = `${rankStr} × ${count}枚`;
+      } else {
+        fieldInfoEl.textContent = '何でも出せます';
+      }
+
+      renderPlayerHand();
+
+      const player = players[0];
+      playerNameEl.className = 'player-name';
+      if (currentPlayerIndex === 0 && !player.finished) {
+        playerNameEl.classList.add('current-turn');
+      }
+      playerStatusEl.textContent = player.finished ? player.rank : `${player.hand.length}枚`;
+
+      if (players[0].finished) {
+        messageEl.textContent = '上がり！他のプレイヤーを待っています...';
+      } else if (currentPlayerIndex === 0) {
+        messageEl.textContent = 'あなたのターン！';
+      } else {
+        messageEl.textContent = `${players[currentPlayerIndex].name} のターン...`;
+      }
+
+      updateButtons();
+    }
+
+    function createCardElement(card, isFieldCard = false) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      if (isFieldCard) div.classList.add('field-card');
+
+      if (card.rank === 'JOKER') {
+        div.classList.add('joker');
+        div.innerHTML = `
+          <span class="corner-rank">JKR</span>
+          <span class="suit">★</span>
+          <span class="rank">JOKER</span>
+        `;
+      } else {
+        const isRed = card.suit === '♥' || card.suit === '♦';
+        div.classList.add(isRed ? 'red' : 'black');
+        div.innerHTML = `
+          <span class="corner-rank">${card.rank}</span>
+          <span class="corner-suit">${card.suit}</span>
+          <span class="suit">${card.suit}</span>
+          <span class="rank">${card.rank}</span>
+        `;
+      }
+
+      return div;
+    }
+
+    function renderPlayerHand() {
+      playerHandEl.innerHTML = '';
+      const player = players[0];
+
+      if (player.finished) {
+        playerHandEl.innerHTML = '<p style="color: var(--text-muted);">手札なし</p>';
+        return;
+      }
+
+      player.hand.forEach((card, index) => {
+        const cardEl = createCardElement(card);
+        cardEl.dataset.index = index;
+
+        if (isInitialDeal) {
+          cardEl.classList.add('deal-animation');
+          cardEl.style.animationDelay = `${index * 0.03}s`;
+        }
+
+        if (selectedCards.includes(index)) {
+          cardEl.classList.add('selected');
+        }
+
+        if (currentPlayerIndex === 0 && gameActive) {
+          cardEl.addEventListener('click', () => toggleCardSelection(index));
+        } else {
+          cardEl.classList.add('disabled');
+        }
+
+        playerHandEl.appendChild(cardEl);
+      });
+    }
+
+    function toggleCardSelection(index) {
+      const card = players[0].hand[index];
+
+      if (selectedCards.includes(index)) {
+        // 既に選択されている場合は解除
+        selectedCards = selectedCards.filter(i => i !== index);
+      } else {
+        if (selectedCards.length > 0) {
+          const firstCard = players[0].hand[selectedCards[0]];
+          // 互換性のないカードをクリックした場合、選択をリセットして新しいカードを選択
+          if (card.rank !== firstCard.rank && card.rank !== 'JOKER' && firstCard.rank !== 'JOKER') {
+            selectedCards = [index];
+            renderPlayerHand();
+            updateButtons();
+            return;
+          }
+        }
+        selectedCards.push(index);
+      }
+
+      renderPlayerHand();
+      updateButtons();
+    }
+
+    function updateButtons() {
+      const isPlayerTurn = currentPlayerIndex === 0 && gameActive && !players[0].finished;
+      playBtn.disabled = !isPlayerTurn || selectedCards.length === 0 || !isValidPlay(selectedCards, 0);
+      passBtn.disabled = !isPlayerTurn || (fieldCards.length === 0 && lastPlayedBy === -1);
+    }
+
+    function isValidPlay(indices, playerIndex = currentPlayerIndex) {
+      if (indices.length === 0) return false;
+
+      const player = players[playerIndex];
+      const cards = indices.map(i => player.hand[i]);
+
+      // インデックスが無効な場合（-1など）
+      if (cards.some(c => !c)) return false;
+
+      const nonJokers = cards.filter(c => c.rank !== 'JOKER');
+
+      if (nonJokers.length > 1) {
+        const firstRank = nonJokers[0].rank;
+        if (!nonJokers.every(c => c.rank === firstRank)) return false;
+      }
+
+      // 上がり禁止カードチェック
+      if (hasForbiddenFinishCard(cards, player.hand.length)) {
+        return false;
+      }
+
+      // 縛りチェック
+      if (!canPlayWithShibari(cards)) {
+        return false;
+      }
+
+      if (fieldCards.length === 0) return true;
+      if (cards.length !== fieldCards.length) return false;
+
+      // ♠3でジョーカー殺し
+      if (enableSpade3Killer && cards.length === 1 && fieldCards.length === 1) {
+        const card = cards[0];
+        const fieldCard = fieldCards[0];
+        if (card.rank === '3' && card.suit === '♠' && fieldCard.rank === 'JOKER') {
+          return true;
+        }
+      }
+
+      const playValue = getEffectiveValue(cards[0].rank === 'JOKER' && nonJokers.length > 0 ? nonJokers[0].value : cards[0].value);
+      const fieldValue = getEffectiveValue(fieldCards[0].value);
+
+      if (cards.length === 1 && cards[0].rank === 'JOKER') return true;
+
+      return playValue > fieldValue;
+    }
+
+    // 上がり禁止カードチェック
+    function hasForbiddenFinishCard(cards, remainingHandSize) {
+      // 上がる場合のみチェック（残り手札がプレイするカードと同じ枚数）
+      if (remainingHandSize !== cards.length) return false;
+
+      const hasJoker = cards.some(c => c.rank === 'JOKER');
+
+      if (revolution) {
+        // 革命中：ジョーカーと3で上がれない
+        const has3 = cards.some(c => c.rank === '3');
+        return hasJoker && has3;
+      } else {
+        // 通常：ジョーカーと2で上がれない
+        const has2 = cards.some(c => c.rank === '2');
+        return hasJoker && has2;
+      }
+    }
+
+    // 縛りチェック（縛りが新たに発動したかを返す）
+    function checkShibari() {
+      const wasShibariActive = isShibariActive;
+
+      if (!enableShibari || fieldCards.length === 0 || previousFieldCards.length === 0) {
+        // 前のカードがない場合は縛りにならない（最初のターン）
+        isShibariActive = false;
+        shibariStatus.classList.remove('active');
+        return false;
+      }
+
+      // 前のカードと今のカードの両方からジョーカーを除外
+      const prevNonJokers = previousFieldCards.filter(c => c.rank !== 'JOKER');
+      const currNonJokers = fieldCards.filter(c => c.rank !== 'JOKER');
+
+      if (prevNonJokers.length === 0 || currNonJokers.length === 0) {
+        isShibariActive = false;
+        shibariStatus.classList.remove('active');
+        return false;
+      }
+
+      // 前のカードと今のカードのマークが同じなら縛り発動
+      const prevSuit = prevNonJokers[0].suit;
+      const currSuit = currNonJokers[0].suit;
+      isShibariActive = prevSuit === currSuit;
+      shibariStatus.classList.toggle('active', isShibariActive);
+
+      // 新たに縛りが発動したかを返す
+      return isShibariActive && !wasShibariActive;
+    }
+
+    // 縛り中に出せるかチェック
+    function canPlayWithShibari(cards) {
+      if (!isShibariActive) return true;
+
+      // ジョーカーのみの場合はOK
+      const nonJokerCards = cards.filter(c => c.rank !== 'JOKER');
+      if (nonJokerCards.length === 0) return true;
+
+      // 場のカードと同じマークかチェック
+      const fieldNonJokers = fieldCards.filter(c => c.rank !== 'JOKER');
+      if (fieldNonJokers.length === 0) return true;
+
+      const requiredSuit = fieldNonJokers[0].suit;
+      return nonJokerCards.every(c => c.suit === requiredSuit);
+    }
+
+    async function playCards(indices) {
+      if (!indices) indices = selectedCards; // Default to selected if not passed (for human)
+
+      if (!isValidPlay(indices)) return;
+
+      const player = players[currentPlayerIndex]; // Use current player, not hardcoded 0
+      const cards = indices.map(i => player.hand[i]);
+      const is8Kiri = enable8Kiri && cards.some(c => c.rank === '8');
+      const isRevolution = enableRevolution && cards.length >= 4;
+      const isElevenBack = enableElevenBack && cards.some(c => c.rank === 'J');
+
+      // ♠3でジョーカー殺し判定
+      const isSpade3Kill = enableSpade3Killer &&
+                           cards.length === 1 &&
+                           cards[0].rank === '3' &&
+                           cards[0].suit === '♠' &&
+                           previousFieldCards.length === 1 &&
+                           previousFieldCards[0].rank === 'JOKER';
+
+      if (isRevolution) {
+        triggerRevolution();
+      }
+
+      if (isElevenBack) {
+        // イレブンバックは永続的な革命ではなく、場が流れるまでの一時的な逆転
+        triggerRevolution();
+        isElevenBackActive = true;
+      }
+
+      // Remove cards from hand (indices must be sorted desc)
+      indices.sort((a, b) => b - a);
+      indices.forEach(i => { player.hand.splice(i, 1); });
+
+      // 縛りチェックのために前のカードを保存
+      previousFieldCards = [...fieldCards];
+      fieldCards = cards;
+      lastPlayedBy = currentPlayerIndex;
+      passCount = 0;
+      players.forEach(p => p.passed = false);
+      selectedCards = [];
+
+      // 縛りチェック
+      let isShibariTriggered = false;
+      if (enableShibari && fieldCards.length > 0) {
+        isShibariTriggered = checkShibari();
+        if (isShibariTriggered) {
+          triggerShibari();
+        }
+      }
+
+      // カードプレイエフェクトを表示
+      const isSpecialPlay = isRevolution || isElevenBack || isShibariTriggered;
+      showPlayEffect(cards, isSpecialPlay);
+
+      render();
+
+      // Show CPU reactions if player (human) made the move
+      if (player.isHuman) {
+        await showCPUReactions(cards, isSpecialPlay);
+      }
+
+      if (player.hand.length === 0) {
+        playerFinished(currentPlayerIndex);
+
+        // 上がった時のセリフ
+        if (!player.isHuman) {
+          const dialogue = getRandomDialogue(player.personality, 'finish');
+          if (dialogue) {
+            showSpeechBubble(currentPlayerIndex, dialogue, 'normal', 8000);
+            await wait(2500);
+          } else {
+            await wait(800);
+          }
+        }
+      }
+
+      render(); // Update again for finished state
+
+      if (is8Kiri) {
+        messageEl.textContent = '8切り！場が流れます！';
+        await wait(1000);
+        clearField();
+        if (!checkGameOver() && gameActive) {
+          if (player.finished) {
+            await nextTurn();
+          } else {
+            // 8-kiri allows same player to play again
+            currentPlayerIndex = lastPlayedBy; // Ensure correct player
+            render();
+            if (!player.isHuman) {
+              await wait(500);
+              await cpuTurn();
+            }
+          }
+        }
+      } else if (isSpade3Kill) {
+        messageEl.textContent = '♠3でジョーカー殺し！場が流れます！';
+        await wait(1000);
+        clearField();
+        if (!checkGameOver() && gameActive) {
+          if (player.finished) {
+            await nextTurn();
+          } else {
+            // Spade 3 kill allows same player to play again
+            currentPlayerIndex = lastPlayedBy; // Ensure correct player
+            render();
+            if (!player.isHuman) {
+              await wait(500);
+              await cpuTurn();
+            }
+          }
+        }
+      } else {
+        if (!checkGameOver()) {
+          await nextTurn();
+        }
+      }
+    }
+
+    // Alias for human play (button click)
+    async function humanPlay() {
+      await playCards(selectedCards);
+    }
+
+    async function passTurn() {
+      const currentPlayer = players[currentPlayerIndex];
+
+      players[currentPlayerIndex].passed = true;
+      passCount++;
+      render();
+
+      // Show CPU reactions if player (human) passed
+      if (currentPlayer.isHuman) {
+        await showCPUPassReactions();
+      }
+
+      const activePlayers = players.filter(p => !p.finished);
+      const allPassed = activePlayers.every(p => p.passed || players.indexOf(p) === lastPlayedBy);
+
+      // Check if logic requires field clear
+      if (allPassed || passCount >= activePlayers.length - 1) {
+        await wait(1000);
+        clearField();
+
+        // Determine next player (last played)
+        if (lastPlayedBy !== -1 && !players[lastPlayedBy].finished) {
+          currentPlayerIndex = lastPlayedBy;
+        } else {
+          // If last player finished, next valid player starts
+          // (Simplified logic: usually next person after last finisher)
+          // Existing logic fallback: keeping current index roughly correct or search next
+          let attempts = 0;
+          while (players[currentPlayerIndex].finished) {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            attempts++;
+            if (attempts > players.length) {
+              console.error('passTurn: No valid player found after field clear');
+              return;
+            }
+          }
+        }
+
+        if (!checkGameOver() && gameActive) {
+          render();
+          if (!players[currentPlayerIndex].isHuman) {
+            await wait(1000);
+            await cpuTurn();
+          }
+        }
+      } else {
+        await nextTurn();
+      }
+    }
+
+    function clearField() {
+      fieldCards = [];
+      previousFieldCards = [];
+      passCount = 0;
+      players.forEach(p => p.passed = false);
+      isShibariActive = false;
+      shibariStatus.classList.remove('active');
+
+      // イレブンバックの一時的な逆転を解除
+      if (isElevenBackActive) {
+        triggerRevolution(); // 逆転を戻す
+        isElevenBackActive = false;
+      }
+    }
+
+    async function nextTurn() {
+      let attempts = 0;
+      do {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        attempts++;
+        // 無限ループ防止: 全プレイヤーをチェックしても見つからなければ中断
+        if (attempts > players.length) {
+          console.error('nextTurn: No valid player found');
+          return;
+        }
+      } while (players[currentPlayerIndex].finished || players[currentPlayerIndex].passed);
+
+      render();
+
+      if (!players[currentPlayerIndex].isHuman && gameActive) {
+        await wait(1800);
+        await cpuTurn();
+      }
+    }
+
+    // CPU AI based on difficulty
+    async function cpuTurn() {
+      if (!gameActive) {
+        console.log(`[cpuTurn] Game not active, exiting`);
+        return;
+      }
+
+      const cpu = players[currentPlayerIndex];
+      if (cpu.finished || cpu.isHuman) {
+        console.log(`[cpuTurn] CPU ${cpu.name} is finished or is human, exiting`);
+        return;
+      }
+
+      console.log(`[cpuTurn] ${cpu.name}'s turn, hand size: ${cpu.hand.length}`);
+      const playableHands = findPlayableHands(cpu.hand);
+      console.log(`[cpuTurn] Found ${playableHands.length} playable hands`);
+
+      // 出せるカードがない場合はパス
+      if (playableHands.length === 0) {
+        console.log(`[cpuTurn] ${cpu.name} has no playable cards, passing`);
+        // パス時の吹き出し
+        const dialogue = getRandomDialogue(cpu.personality, 'pass');
+        if (dialogue) {
+          showSpeechBubble(currentPlayerIndex, dialogue, 'normal', 8000);
+          await wait(2500);
+        } else {
+          await wait(800);
+        }
+        await passTurn();
+        return;
+      }
+
+      let chosen;
+      if (difficulty === 'easy') {
+        // 完全ランダム
+        chosen = playableHands[Math.floor(Math.random() * playableHands.length)];
+      } else if (difficulty === 'normal') {
+        // 戦略的プレイ（旧hard相当）
+        chosen = selectStrategicPlay(cpu.hand, playableHands);
+      } else {
+        // 超高度AI（さらに強化）
+        chosen = selectAdvancedPlay(cpu.hand, playableHands);
+      }
+
+      console.log(`[cpuTurn] ${cpu.name} chose to play:`, chosen.map(c => `${c.rank}${c.suit}`));
+
+      // カードを出す時の吹き出し
+      const dialogue = getRandomDialogue(cpu.personality, 'play');
+      const showDialogue = dialogue && Math.random() < 0.6;
+      if (showDialogue) {
+        showSpeechBubble(currentPlayerIndex, dialogue, 'normal', 8000);
+      }
+
+      // Convert card objects to indices for playCards
+      const indices = chosen.map(c => cpu.hand.indexOf(c)).filter(i => i !== -1);
+      console.log(`[cpuTurn] Card indices:`, indices);
+
+      // 有効なindicesがない場合はパス
+      if (indices.length === 0) {
+        console.error(`[cpuTurn] ${cpu.name} chose cards but indices are empty! Passing instead.`);
+        await wait(showDialogue ? 2500 : 800);
+        await passTurn();
+        return;
+      }
+
+      await wait(showDialogue ? 2500 : 800);
+      console.log(`[cpuTurn] ${cpu.name} playing cards...`);
+      await playCards(indices);
+      console.log(`[cpuTurn] ${cpu.name} finished playing cards`);
+    }
+
+    // Strategic AI for hard mode
+    function selectStrategicPlay(hand, playableHands) {
+      const grouped = groupCardsByRank(hand);
+
+      // Prioritize getting rid of singles over pairs
+      // Try to keep strong cards for later
+      // Consider revolution opportunities
+
+      // Sort by strategic value
+      const scored = playableHands.map(play => {
+        let score = 0;
+        const value = getEffectiveValue(play[0].value);
+        const count = play.length;
+
+        // Prefer playing weaker cards
+        score -= value * 10;
+
+        // Prefer playing cards where we have multiples
+        const rankCount = grouped[play[0].rank]?.length || 0;
+        if (count < rankCount) {
+          score -= 20; // Penalize breaking up sets
+        }
+
+        // Bonus for 8-kiri when we have good cards left
+        if (play[0].rank === '8') {
+          const strongCards = hand.filter(c => getEffectiveValue(c.value) >= 13).length;
+          if (strongCards >= 3) {
+            score += 50;
+          }
+        }
+
+        // Bonus for revolution if we have weak cards
+        if (count >= 4) {
+          const weakCards = hand.filter(c => getEffectiveValue(c.value) <= 6).length;
+          if (weakCards >= hand.length * 0.5) {
+            score += 100;
+          }
+        }
+
+        return { play, score };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      return scored[0].play;
+    }
+
+    // Advanced AI for hard mode (超高度)
+    function selectAdvancedPlay(hand, playableHands) {
+      const grouped = groupCardsByRank(hand);
+      const activePlayers = players.filter(p => !p.finished);
+      const opponentHandCounts = activePlayers.filter(p => !p.isHuman).map(p => p.hand.length);
+      const minOpponentHand = Math.min(...opponentHandCounts);
+
+      const scored = playableHands.map(play => {
+        let score = 0;
+        const value = getEffectiveValue(play[0].value);
+        const count = play.length;
+        const rankCount = grouped[play[0].rank]?.length || 0;
+
+        // 基本戦略：弱いカードを優先
+        score -= value * 15;
+
+        // セットを崩さない（強化）
+        if (count < rankCount) {
+          score -= 30;
+        }
+
+        // 革命戦略（強化）
+        if (count >= 4 && enableRevolution) {
+          const weakCards = hand.filter(c => getEffectiveValue(c.value) <= 6).length;
+          if (weakCards >= hand.length * 0.4) {
+            score += 150; // 革命ボーナス増加
+          }
+          // 相手の手札が少ない時は革命を避ける
+          if (minOpponentHand <= 3) {
+            score -= 100;
+          }
+        }
+
+        // 8切り戦略（強化）
+        if (play[0].rank === '8' && enable8Kiri) {
+          const strongCards = hand.filter(c => getEffectiveValue(c.value) >= 13).length;
+          if (strongCards >= 3) {
+            score += 70;
+          }
+          // 終盤での8切り
+          if (hand.length <= 5) {
+            score += 50;
+          }
+        }
+
+        // ジョーカー温存戦略
+        if (play.some(c => c.rank === 'JOKER')) {
+          if (hand.length > 7) {
+            score -= 80; // 序盤はジョーカーを温存
+          } else if (hand.length <= 3) {
+            score += 60; // 終盤は積極的に使う
+          }
+        }
+
+        // 終盤戦略
+        if (hand.length <= 4) {
+          // 上がりやすさ優先
+          const remainingCards = hand.length - count;
+          if (remainingCards <= 2) {
+            score += 100; // 上がれるチャンス
+          }
+        }
+
+        // 相手の手札枚数を考慮
+        if (minOpponentHand <= 2) {
+          // 相手が上がりそうな時は強いカードを出す
+          if (value >= 13) {
+            score += 80;
+          }
+        }
+
+        // ペア・3枚・4枚の価値
+        if (count === 2) score += 10;
+        if (count === 3) score += 20;
+        if (count >= 4) score += 30;
+
+        return { play, score };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      return scored[0].play;
+    }
+
+    function findPlayableHands(hand) {
+      const hands = [];
+      const grouped = groupCardsByRank(hand);
+
+      for (const [rank, cards] of Object.entries(grouped)) {
+        for (let count = 1; count <= cards.length; count++) {
+          if (fieldCards.length > 0 && count !== fieldCards.length) continue;
+
+          const combo = cards.slice(0, count);
+          if (isValidCpuPlay(combo)) {
+            hands.push(combo);
+          }
+        }
+      }
+
+      return hands;
+    }
+
+    function groupCardsByRank(hand) {
+      const groups = {};
+      hand.forEach(card => {
+        if (!groups[card.rank]) groups[card.rank] = [];
+        groups[card.rank].push(card);
+      });
+      return groups;
+    }
+
+    function findWeakestPlay(hand) {
+      const grouped = groupCardsByRank(hand);
+      let weakest = null;
+      let weakestValue = Infinity;
+
+      for (const [rank, cards] of Object.entries(grouped)) {
+        const value = getEffectiveValue(cards[0].value);
+        if (value < weakestValue) {
+          weakestValue = value;
+          weakest = [cards[0]];
+        }
+      }
+
+      return weakest;
+    }
+
+    function isValidCpuPlay(cards) {
+      if (cards.length === 0) return false;
+      if (fieldCards.length === 0) return true;
+      if (cards.length !== fieldCards.length) return false;
+
+      // 縛りチェック
+      if (!canPlayWithShibari(cards)) return false;
+
+      // ♠3でジョーカー殺し
+      if (enableSpade3Killer && cards.length === 1 && fieldCards.length === 1) {
+        const card = cards[0];
+        const fieldCard = fieldCards[0];
+        if (card.rank === '3' && card.suit === '♠' && fieldCard.rank === 'JOKER') {
+          return true;
+        }
+      }
+
+      const playValue = getEffectiveValue(cards[0].value);
+      const fieldValue = getEffectiveValue(fieldCards[0].value);
+
+      return playValue > fieldValue;
+    }
+
+    // cpuPlayCards removed (unified into playCards)
+
+    function triggerRevolution() {
+      revolution = !revolution;
+      revolutionIndicator.classList.remove('show');
+      void revolutionIndicator.offsetWidth;
+      revolutionIndicator.classList.add('show');
+      revolutionStatus.classList.toggle('active', revolution);
+
+      players.forEach(p => { p.hand = sortCards(p.hand); });
+    }
+
+    function triggerShibari() {
+      shibariIndicator.classList.remove('show');
+      void shibariIndicator.offsetWidth;
+      shibariIndicator.classList.add('show');
+    }
+
+    function playerFinished(index) {
+      const player = players[index];
+      player.finished = true;
+      finishOrder.push(index);
+
+      const rankNames = ['大富豪', '富豪', '貧民', '大貧民'];
+      player.rank = rankNames[finishOrder.length - 1];
+    }
+
+    function checkGameOver() {
+      const remaining = players.filter(p => !p.finished);
+
+      if (remaining.length <= 1) {
+        if (remaining.length === 1) {
+          playerFinished(players.indexOf(remaining[0]));
+        }
+
+        gameActive = false;
+        showGameOver();
+        return true;
+      }
+
+      return false;
+    }
+
+    function showGameOver() {
+      resultsListEl.innerHTML = '';
+
+      const rankNames = ['大富豪', '富豪', '貧民', '大貧民'];
+      const playerRank = finishOrder.indexOf(0) + 1; // Player's rank (1-4)
+
+      finishOrder.forEach((playerIndex, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${i + 1}位 ${players[playerIndex].name} ${rankNames[i]}`;
+        resultsListEl.appendChild(li);
+      });
+
+      setTimeout(() => {
+        gameOverEl.classList.add('show');
+        // Show victory演出
+        setTimeout(() => showVictoryDialogues(playerRank), 800);
+      }, 500);
+    }
+
+    async function showVictoryDialogues(playerRank) {
+      const dialogues = VICTORY_DIALOGUES[`rank${playerRank}`];
+      if (!dialogues) return;
+
+      await wait(1000);
+
+      if (playerRank === 1) {
+        // プレイヤー1位
+        for (const arg of dialogues.arguments) {
+          await playDialogue(arg, 2500);
+          await wait(500);
+        }
+      } else if (playerRank === 2) {
+        // プレイヤー2位
+        const winner = finishOrder[0];
+        const winnerPlayer = players[winner];
+        if (winnerPlayer.personality && dialogues.winner[winnerPlayer.personality]) {
+          await playDialogue(dialogues.winner[winnerPlayer.personality], 3000);
+          await wait(500);
+        }
+        // 他のCPUたちの反応
+        for (const reaction of dialogues.reactions) {
+          await playDialogue(reaction, 2500);
+          await wait(300);
+        }
+      } else if (playerRank === 3) {
+        // プレイヤー3位
+        for (const reaction of dialogues.reactions) {
+          await playDialogue(reaction, 2500);
+          await wait(300);
+        }
+      } else if (playerRank === 4) {
+        // プレイヤー最下位
+        for (const mock of dialogues.mockery) {
+          await playDialogue(mock, 2500);
+          await wait(300);
+        }
+      }
+    }
+
+    // Event listeners
+    playBtn.addEventListener('click', humanPlay);
+    passBtn.addEventListener('click', passTurn);
+    document.getElementById('play-again-btn').addEventListener('click', initGame);
+
+    // Difficulty buttons
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        difficulty = btn.dataset.difficulty;
+        initGame();
+      });
+    });
+
+    // Start screen
+    const startGameBtn = document.getElementById('start-game-btn');
+
+    // Difficulty selection
+    document.querySelectorAll('.difficulty-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.difficulty-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        difficulty = option.dataset.difficulty;
+      });
+    });
+
+    // Rule selection
+    document.querySelectorAll('.rule-option').forEach(option => {
+      option.addEventListener('click', () => {
+        option.classList.toggle('selected');
+        const rule = option.dataset.rule;
+        const isSelected = option.classList.contains('selected');
+
+        if (rule === 'revolution') {
+          enableRevolution = isSelected;
+        } else if (rule === '8kiri') {
+          enable8Kiri = isSelected;
+        } else if (rule === 'shibari') {
+          enableShibari = isSelected;
+        } else if (rule === 'spade3Killer') {
+          enableSpade3Killer = isSelected;
+        } else if (rule === 'elevenBack') {
+          enableElevenBack = isSelected;
+        }
+      });
+    });
+
+    // Start game button
+    startGameBtn.addEventListener('click', () => {
+      startModal.classList.add('hide');
+      setTimeout(() => {
+        initGame();
+      }, 300);
+    });
+
+    // Help modal
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const helpClose = document.getElementById('help-close');
+
+    helpBtn.addEventListener('click', () => {
+      helpModal.classList.add('show');
+      const isMobile = window.matchMedia('(pointer: coarse)').matches;
+      const targetTab = isMobile ? 'mobile' : 'pc';
+      document.querySelectorAll('.help-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === targetTab);
+      });
+      document.querySelectorAll('.help-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${targetTab}`);
+      });
+    });
+
+    helpClose.addEventListener('click', () => helpModal.classList.remove('show'));
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) helpModal.classList.remove('show');
+    });
+
+    document.querySelectorAll('.help-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.help-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.help-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+
+</html>
