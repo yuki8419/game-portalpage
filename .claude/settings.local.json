@@ -9,7 +9,10 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(mkdir:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(git rm:*)",
+      "Bash(start:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []

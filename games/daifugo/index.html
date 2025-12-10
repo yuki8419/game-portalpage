@@ -115,6 +115,17 @@
     }
 
     .home-btn { left: 0.75rem; }
+    .reset-btn {
+      left: 3.5rem;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+    .reset-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--text-dark);
+    }
     .help-btn {
       right: 0.75rem;
       font-size: 1.1rem;
@@ -528,6 +539,58 @@
       color: var(--white);
       font-weight: 600;
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* スキップ・次のターンボタン */
+    .skip-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .skip-btn, .next-turn-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 2px solid;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: none;
+    }
+
+    .skip-btn {
+      background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+      border-color: #a78bfa;
+      color: white;
+    }
+
+    .skip-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .skip-btn.show {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .next-turn-btn {
+      background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+      border-color: #22d3ee;
+      color: white;
+    }
+
+    .next-turn-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(8, 145, 178, 0.4);
+    }
+
+    .next-turn-btn.show {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     /* Message */
@@ -1837,6 +1900,17 @@
         display: none;
       }
 
+      /* スキップ・次のターンボタン モバイル対応 */
+      .skip-controls {
+        margin-top: 0.4rem;
+      }
+
+      .skip-btn, .next-turn-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+        min-height: 36px;
+      }
+
       /* ===== 吹き出し ===== */
       .speech-bubble {
         min-width: 70px;
@@ -1986,6 +2060,12 @@
     </svg>
   </a>
 
+  <button class="nav-btn reset-btn" id="reset-btn" title="最初からやり直す">
+    <svg viewBox="0 0 24 24">
+      <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+    </svg>
+  </button>
+
   <button class="nav-btn help-btn" id="help-btn">?</button>
 
   <div class="game-table">
@@ -2025,6 +2105,10 @@
         <button class="btn btn-danger field-btn" id="pass-btn" disabled>パス</button>
       </div>
       <div class="field-info" id="field-info"></div>
+      <div class="skip-controls">
+        <button class="skip-btn" id="skip-btn">⏭ スキップ</button>
+        <button class="next-turn-btn" id="next-turn-btn">▶ 流す</button>
+      </div>
     </div>
 
     <p class="message" id="message"></p>
@@ -2369,6 +2453,8 @@
     let enableElevenBack = false;
     let isShibariActive = false;
     let isElevenBackActive = false; // イレブンバックの一時的な逆転状態
+    let skipRequested = false; // プレイヤー上がり後のスキップ要求
+    let nextTurnRequested = false; // 「流す」ボタンによるターンスキップ要求
 
     // DOM elements
     const opponentsArea = document.getElementById('opponents-area');
@@ -2399,6 +2485,8 @@
     const jankenOpponentsEl = document.getElementById('janken-opponents');
     const jankenTauntEl = document.getElementById('janken-taunt');
     const jankenResult = document.getElementById('janken-result');
+    const skipBtn = document.getElementById('skip-btn');
+    const nextTurnBtn = document.getElementById('next-turn-btn');
 
     // エフェクト関数
     function showSpeedLines() {
@@ -2664,6 +2752,30 @@
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+    // プレイヤー上がり後またはスキップ要求時は高速化
+    const smartWait = async (ms) => {
+      // スキップ要求時は即座に終了
+      if (skipRequested) return;
+      // 「流す」要求時も即座に終了
+      if (nextTurnRequested) return;
+      // プレイヤーが上がっている場合は待ち時間を1/4に
+      if (players[0] && players[0].finished) {
+        return wait(Math.min(ms / 4, 200));
+      }
+      return wait(ms);
+    };
+
+    // スキップボタンと流すボタンの表示制御
+    function updateSkipButtons() {
+      // プレイヤーが上がっていて、ゲームがまだ続いている場合にスキップボタン表示
+      const showSkip = players[0] && players[0].finished && gameActive;
+      skipBtn.classList.toggle('show', showSkip);
+
+      // フィールドにカードがあり、プレイヤーのターンでなければ「流す」ボタン表示
+      const showNextTurn = fieldCards.length > 0 && currentPlayerIndex !== 0 && gameActive && !players[0].finished;
+      nextTurnBtn.classList.toggle('show', showNextTurn);
+    }
+
     function getRandomDialogue(personality, action) {
       const dialogues = CHARACTER_DIALOGUES[personality];
       if (!dialogues || !dialogues[action]) return null;
@@ -2724,49 +2836,42 @@
       activeBubbles.set(playerIndex, { timeout, fadeTimeout });
     }
 
-    // Determine reaction probability and who reacts
+    // プレイヤーがカードを出した時、全CPUがリアクション
     async function showCPUReactions(cards, isRevolution = false) {
       const cpuPlayers = players.map((p, i) => ({ ...p, index: i })).filter(p => !p.isHuman && !p.finished);
       if (cpuPlayers.length === 0) return;
 
       const cardValue = getEffectiveValue(cards[0].value);
       const isStrong = cardValue >= 13;
-      const cardCount = cards.length;
 
-      // Higher probability for stronger plays
-      let baseChance = isStrong ? 0.7 : 0.4;
-      if (isRevolution) baseChance = 1.0;
-      if (cardCount >= 3) baseChance += 0.2;
-
-      // Revolution - everyone reacts!
+      // Revolution - everyone reacts with angry!
       if (isRevolution) {
         for (let i = 0; i < cpuPlayers.length; i++) {
           const cpu = cpuPlayers[i];
           const dialogue = getRandomDialogue(cpu.personality, 'reactRevolution');
           if (dialogue) {
             setTimeout(() => {
-              showSpeechBubble(cpu.index, dialogue, 'angry', 5500);
-            }, i * 600); // 0.6秒ずつずらす
+              showSpeechBubble(cpu.index, dialogue, 'angry', 4000);
+            }, i * 400);
           }
         }
-        await wait(2500);
+        await wait(2000);
       } else {
-        // Normal reaction - ALL characters react with delays
+        // 全CPUがリアクション（強いカードか弱いカードかで変える）
         const actionType = isStrong ? 'reactStrong' : 'reactWeak';
-        const mood = isStrong ? 'impressed' : 'angry';
+        const mood = isStrong ? 'impressed' : 'normal';
 
-        // Show all CPU reactions with staggered delays
         for (let i = 0; i < cpuPlayers.length; i++) {
           const cpu = cpuPlayers[i];
           const dialogue = getRandomDialogue(cpu.personality, actionType);
           if (dialogue) {
             setTimeout(() => {
-              showSpeechBubble(cpu.index, dialogue, mood, 5000);
-            }, i * 500); // 0.5秒ずつずらす
+              showSpeechBubble(cpu.index, dialogue, mood, 3500);
+            }, i * 350);
           }
         }
 
-        await wait(2200);
+        await wait(1800);
       }
     }
 
@@ -3003,8 +3108,12 @@
       finishOrder = [];
       revolution = false;
       isShibariActive = false;
+      skipRequested = false;
+      nextTurnRequested = false;
 
       gameOverEl.classList.remove('show');
+      skipBtn.classList.remove('show');
+      nextTurnBtn.classList.remove('show');
       revolutionStatus.classList.remove('active');
       shibariStatus.classList.remove('active');
 
@@ -3437,7 +3546,7 @@
       render();
 
       // Show CPU reactions if player (human) passed
-      if (currentPlayer.isHuman) {
+      if (currentPlayer.isHuman && !nextTurnRequested) {
         await showCPUPassReactions();
       }
 
@@ -3446,8 +3555,11 @@
 
       // Check if logic requires field clear
       if (allPassed || passCount >= activePlayers.length - 1) {
-        await wait(1000);
+        await smartWait(1000);
         clearField();
+        // 「流す」要求をリセット
+        nextTurnRequested = false;
+        updateSkipButtons();
 
         // Determine next player (last played)
         if (lastPlayedBy !== -1 && !players[lastPlayedBy].finished) {
@@ -3470,12 +3582,46 @@
         if (!checkGameOver() && gameActive) {
           render();
           if (!players[currentPlayerIndex].isHuman) {
-            await wait(1000);
+            await smartWait(1000);
             await cpuTurn();
           }
         }
       } else {
         await nextTurn();
+      }
+    }
+
+    // 「流す」ボタン用：全員をパスさせてフィールドをクリア
+    async function forceNextTurn() {
+      if (!gameActive || fieldCards.length === 0) return;
+
+      nextTurnRequested = true;
+      nextTurnBtn.classList.remove('show');
+
+      // 全プレイヤーのパス状態を設定（出したプレイヤー以外）
+      players.forEach((p, i) => {
+        if (i !== lastPlayedBy && !p.finished) {
+          p.passed = true;
+        }
+      });
+      passCount = players.filter(p => !p.finished).length - 1;
+
+      await smartWait(300);
+      clearField();
+      nextTurnRequested = false;
+
+      // Determine next player (last played)
+      if (lastPlayedBy !== -1 && !players[lastPlayedBy].finished) {
+        currentPlayerIndex = lastPlayedBy;
+      }
+
+      if (!checkGameOver() && gameActive) {
+        render();
+        updateSkipButtons();
+        if (!players[currentPlayerIndex].isHuman) {
+          await smartWait(800);
+          await cpuTurn();
+        }
       }
     }
 
@@ -3509,8 +3655,11 @@
       render();
 
       if (!players[currentPlayerIndex].isHuman && gameActive) {
-        await wait(1800);
+        updateSkipButtons();
+        await smartWait(1800);
         await cpuTurn();
+      } else {
+        updateSkipButtons();
       }
     }
 
@@ -3518,6 +3667,12 @@
     async function cpuTurn() {
       if (!gameActive) {
         console.log(`[cpuTurn] Game not active, exiting`);
+        return;
+      }
+
+      // スキップ要求されている場合は残りを即座に処理
+      if (skipRequested) {
+        await finishGameInstantly();
         return;
       }
 
@@ -3534,14 +3689,7 @@
       // 出せるカードがない場合はパス
       if (playableHands.length === 0) {
         console.log(`[cpuTurn] ${cpu.name} has no playable cards, passing`);
-        // パス時の吹き出し
-        const dialogue = getRandomDialogue(cpu.personality, 'pass');
-        if (dialogue) {
-          showSpeechBubble(currentPlayerIndex, dialogue, 'normal', 8000);
-          await wait(2500);
-        } else {
-          await wait(800);
-        }
+        await smartWait(800);
         await passTurn();
         return;
       }
@@ -3560,13 +3708,6 @@
 
       console.log(`[cpuTurn] ${cpu.name} chose to play:`, chosen.map(c => `${c.rank}${c.suit}`));
 
-      // カードを出す時の吹き出し
-      const dialogue = getRandomDialogue(cpu.personality, 'play');
-      const showDialogue = dialogue && Math.random() < 0.6;
-      if (showDialogue) {
-        showSpeechBubble(currentPlayerIndex, dialogue, 'normal', 8000);
-      }
-
       // Convert card objects to indices for playCards
       const indices = chosen.map(c => cpu.hand.indexOf(c)).filter(i => i !== -1);
       console.log(`[cpuTurn] Card indices:`, indices);
@@ -3574,15 +3715,38 @@
       // 有効なindicesがない場合はパス
       if (indices.length === 0) {
         console.error(`[cpuTurn] ${cpu.name} chose cards but indices are empty! Passing instead.`);
-        await wait(showDialogue ? 2500 : 800);
+        await smartWait(800);
         await passTurn();
         return;
       }
 
-      await wait(showDialogue ? 2500 : 800);
+      await smartWait(800);
       console.log(`[cpuTurn] ${cpu.name} playing cards...`);
       await playCards(indices);
       console.log(`[cpuTurn] ${cpu.name} finished playing cards`);
+    }
+
+    // スキップボタン押下時にゲームを即座に終了させる
+    async function finishGameInstantly() {
+      console.log('[finishGameInstantly] Finishing game instantly...');
+
+      // 全CPUの残りカードを自動処理（シンプルに順位だけ決める）
+      while (gameActive) {
+        const remaining = players.filter(p => !p.finished);
+        if (remaining.length <= 1) {
+          if (remaining.length === 1) {
+            playerFinished(players.indexOf(remaining[0]));
+          }
+          gameActive = false;
+          showGameOver();
+          return;
+        }
+
+        // 残りプレイヤーの中から手札が一番少ない人を上がらせる
+        remaining.sort((a, b) => a.hand.length - b.hand.length);
+        const winner = remaining[0];
+        playerFinished(players.indexOf(winner));
+      }
     }
 
     // Strategic AI for hard mode
@@ -3889,6 +4053,17 @@
     mobilePassBtn.addEventListener('click', passTurn);
     document.getElementById('play-again-btn').addEventListener('click', initGame);
 
+    // スキップボタン - プレイヤー上がり後に残りゲームをスキップ
+    skipBtn.addEventListener('click', () => {
+      if (players[0] && players[0].finished && gameActive) {
+        skipRequested = true;
+        skipBtn.classList.remove('show');
+      }
+    });
+
+    // 「流す」ボタン - フィールドをクリアして次のターンへ
+    nextTurnBtn.addEventListener('click', forceNextTurn);
+
     // Difficulty buttons
     document.querySelectorAll('.diff-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -3938,6 +4113,41 @@
       setTimeout(() => {
         initGame();
       }, 300);
+    });
+
+    // Reset button - 難易度選択に戻る
+    const resetBtn = document.getElementById('reset-btn');
+    resetBtn.addEventListener('click', () => {
+      if (confirm('ゲームをリセットして最初からやり直しますか？')) {
+        // ゲーム状態をリセット
+        gameActive = false;
+        players = [];
+        fieldCards = [];
+        selectedCards = [];
+        finishOrder = [];
+        revolution = false;
+        isShibariActive = false;
+        isElevenBackActive = false;
+        skipRequested = false;
+        nextTurnRequested = false;
+
+        // UIをリセット
+        opponentsArea.innerHTML = '';
+        fieldCardsEl.innerHTML = '';
+        playerHandEl.innerHTML = '';
+        messageEl.textContent = '';
+        fieldInfoEl.textContent = '';
+        revolutionStatus.classList.remove('active');
+        shibariStatus.classList.remove('active');
+        skipBtn.classList.remove('show');
+        nextTurnBtn.classList.remove('show');
+
+        // ゲームオーバー画面を閉じる
+        document.getElementById('game-over').classList.remove('show');
+
+        // スタート画面を表示
+        startModal.classList.remove('hide');
+      }
     });
 
     // Help modal
