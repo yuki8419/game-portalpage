@@ -695,6 +695,16 @@
       cursor: default;
     }
     .card.field-card:hover { transform: none; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+    .card.field-card .suit {
+      font-size: 1.6rem;
+    }
+    .card.field-card .corner-rank {
+      font-size: 0.8rem;
+    }
+    .card.field-card .corner-suit {
+      font-size: 0.6rem;
+      top: 16px;
+    }
 
     /* カード内のレイアウト */
     .card .corner-rank,
@@ -1195,10 +1205,7 @@
     }
 
     .janken-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: 0.05em;
+      display: none;
     }
 
     .janken-result {
