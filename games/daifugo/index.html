@@ -1475,363 +1475,370 @@
       color: var(--accent);
     }
 
-    /* Responsive */
+    /* Responsive - 1画面に収める設計 */
     @media (max-width: 600px) {
-      body {
-        padding: 0;
+      html, body {
         margin: 0;
-        overflow-x: hidden;
-        min-height: 100vh;
-        height: auto;
+        padding: 0;
+        overflow: hidden;
+        height: 100vh;
+        height: 100dvh;
+        width: 100vw;
       }
 
       .game-table {
         border-radius: 0;
         border: none;
-        border-top: 4px solid #3e2723;
-        border-bottom: 4px solid #3e2723;
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
+        min-height: auto;
         max-width: 100%;
-        overflow-x: hidden;
+        overflow: hidden;
         box-shadow: none;
+        padding: 0.3rem;
       }
 
       .game-container {
-        overflow-x: hidden;
-      }
-
-      h1 {
-        font-size: 1rem;
-        letter-spacing: 0.05em;
-        margin: 0.3rem 0;
-      }
-
-      h1 .small {
-        font-size: 0.7rem;
-      }
-
-      h1 .big {
-        font-size: 1.4rem;
-      }
-
-      h1 .medium {
-        font-size: 0.9rem;
-      }
-
-      .nav-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 1.2rem;
-      }
-
-      .home-btn {
-        top: 0.5rem;
-        left: 0.5rem;
-      }
-
-      .help-btn {
-        top: 0.5rem;
-        right: 0.5rem;
-      }
-
-      .game-header {
-        margin-bottom: 0.5rem;
-      }
-
-      .difficulty-selector {
-        gap: 0.3rem;
-        margin-bottom: 0.5rem;
-      }
-
-      /* カードサイズ調整 */
-      .card {
-        width: 45px;
-        height: 63px;
-        font-size: 0.7rem;
-      }
-
-      .card .suit {
-        font-size: 1.2rem;
-      }
-
-      .card .rank {
-        font-size: 0.8rem;
-      }
-
-      .card .corner-rank {
-        font-size: 0.6rem;
-        top: 2px;
-        left: 3px;
-      }
-
-      .card .corner-suit {
-        font-size: 0.45rem;
-        top: 10px;
-        left: 3px;
-      }
-
-      .card.selected {
-        transform: translateY(-10px);
-      }
-
-      .card.field-card {
-        width: 50px;
-        height: 70px;
-      }
-
-      /* 対戦相手エリア */
-      .opponents-area {
-        gap: 0.3rem;
-        padding-top: 3.5rem;
-        margin-bottom: 0.3rem;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .opponent {
-        min-width: 65px;
-        padding: 0.4rem 0.6rem;
-        flex: 0 1 auto;
-      }
-
-      .opponent-avatar {
-        width: 30px;
-        height: 30px;
-        font-size: 0.65rem;
-      }
-
-      .opponent-title {
-        font-size: 0.45rem;
-      }
-
-      .opponent-name {
-        font-size: 0.6rem;
-      }
-
-      .opponent-cards {
-        font-size: 0.55rem;
-      }
-
-      /* フィールドエリア */
-      .field-area {
-        min-height: 90px;
-        padding: 0.5rem 0.3rem;
-        margin-bottom: 0.3rem;
-      }
-
-      .field-label {
-        font-size: 0.55rem;
-        top: 0.25rem;
-        left: 0.4rem;
-      }
-
-      .revolution-status {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.4rem;
-        top: 0.25rem;
-        right: 0.4rem;
-      }
-
-      #shibari-status {
-        top: 1.6rem !important;
-      }
-
-      .field-content {
-        gap: 0.4rem;
-        margin: 0.2rem 0;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
         flex-direction: column;
       }
 
+      /* ヘッダー非表示でスペース確保 */
+      .game-header {
+        display: none;
+      }
+
+      .difficulty-selector {
+        display: none;
+      }
+
+      .nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+      }
+
+      .home-btn {
+        top: 0.3rem;
+        left: 0.3rem;
+      }
+
+      .help-btn {
+        top: 0.3rem;
+        right: 0.3rem;
+      }
+
+      /* カード - コンパクト */
+      .card {
+        width: 32px;
+        height: 45px;
+        font-size: 0.55rem;
+        border-radius: 4px;
+      }
+
+      .card .suit {
+        font-size: 0.9rem;
+      }
+
+      .card .rank {
+        font-size: 0.6rem;
+      }
+
+      .card .corner-rank {
+        font-size: 0.5rem;
+        top: 1px;
+        left: 2px;
+      }
+
+      .card .corner-suit {
+        font-size: 0.4rem;
+        top: 8px;
+        left: 2px;
+      }
+
+      .card.selected {
+        transform: translateY(-8px);
+      }
+
+      .card.field-card {
+        width: 36px;
+        height: 50px;
+      }
+
+      /* 対戦相手エリア - コンパクト */
+      .opponents-area {
+        gap: 0.25rem;
+        padding-top: 2.5rem;
+        margin-bottom: 0.2rem;
+        flex: 0 0 auto;
+      }
+
+      .opponent {
+        min-width: 55px;
+        padding: 0.25rem 0.4rem;
+      }
+
+      .opponent-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 0.55rem;
+      }
+
+      .opponent-title {
+        display: none;
+      }
+
+      .opponent-name {
+        font-size: 0.5rem;
+      }
+
+      .opponent-cards {
+        font-size: 0.5rem;
+      }
+
+      .opponent-rank {
+        font-size: 0.45rem;
+        padding: 0.1rem 0.3rem;
+      }
+
+      /* フィールドエリア - 極小 */
+      .field-area {
+        min-height: auto;
+        padding: 0.3rem 0.2rem;
+        margin-bottom: 0.2rem;
+        flex: 0 0 auto;
+      }
+
+      .field-label {
+        font-size: 0.5rem;
+        top: 0.2rem;
+        left: 0.3rem;
+      }
+
+      .revolution-status {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.3rem;
+        top: 0.2rem;
+        right: 0.3rem;
+      }
+
+      #shibari-status {
+        top: 1.3rem !important;
+      }
+
+      .field-content {
+        gap: 0.3rem;
+        margin: 0.15rem 0;
+        flex-direction: row;
+      }
+
       .field-cards {
-        min-height: 55px;
-        gap: 3px;
-        flex-wrap: wrap;
-        min-width: auto;
-        width: 100%;
-        justify-content: center;
+        min-height: 40px;
+        gap: 2px;
+        flex: 1;
       }
 
       .field-info {
-        font-size: 0.6rem;
-        margin-top: 0.2rem;
+        font-size: 0.5rem;
+        margin-top: 0.15rem;
       }
 
-      /* ボタンサイズ調整 */
+      /* ボタン - コンパクト */
       .btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.75rem;
-        min-width: 60px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.6rem;
+        min-width: 45px;
         touch-action: manipulation;
       }
 
       .field-btn {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.7rem;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.55rem;
       }
 
       .diff-btn {
-        padding: 0.35rem 0.6rem;
-        font-size: 0.6rem;
+        padding: 0.25rem 0.4rem;
+        font-size: 0.5rem;
         flex: 1;
         min-width: 0;
       }
 
       .diff-label {
-        font-size: 0.45rem;
+        font-size: 0.4rem;
       }
 
-      /* プレイヤーエリア */
+      /* プレイヤーエリア - flex-growで残りスペースを使う */
       .player-area {
-        padding: 0.5rem 0.3rem;
+        padding: 0.3rem 0.2rem;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .player-header {
+        flex: 0 0 auto;
+        margin-bottom: 0.2rem;
       }
 
       .player-name {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
       }
 
       .player-status {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
       }
 
       .player-hand {
-        min-height: 55px;
+        flex: 1 1 auto;
+        min-height: 0;
         gap: 2px;
-        padding: 0.4rem 0.2rem;
-        grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+        padding: 0.2rem;
+        grid-template-columns: repeat(7, 1fr);
         justify-items: center;
+        align-content: start;
         max-width: 100%;
+        overflow: hidden;
       }
 
       .message {
-        font-size: 0.7rem;
-        margin: 0.3rem 0;
-        padding: 0.3rem;
+        font-size: 0.55rem;
+        margin: 0.15rem 0;
+        padding: 0.2rem;
+        flex: 0 0 auto;
       }
 
-      /* 吹き出し */
+      /* 吹き出し - コンパクト */
       .speech-bubble {
-        min-width: 70px;
-        max-width: 120px;
-        padding: 0.3rem 0.5rem;
+        min-width: 60px;
+        max-width: 100px;
+        padding: 0.2rem 0.4rem;
       }
 
       .speech-text {
-        font-size: 0.6rem;
-        line-height: 1.25;
+        font-size: 0.5rem;
+        line-height: 1.2;
       }
 
       /* ゲームオーバー画面 */
       .game-over {
-        padding: 1.2rem 0.8rem;
-        max-width: 95%;
+        padding: 1rem 0.6rem;
+        max-width: 90%;
       }
 
       .game-over h2 {
-        font-size: 1.2rem;
-        margin-bottom: 0.8rem;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
       }
 
       .results-list {
-        gap: 0.4rem;
+        gap: 0.3rem;
       }
 
       .result-item {
-        padding: 0.5rem;
-        font-size: 0.7rem;
+        padding: 0.4rem;
+        font-size: 0.6rem;
       }
 
       .result-avatar {
-        width: 28px;
-        height: 28px;
-        font-size: 0.7rem;
+        width: 24px;
+        height: 24px;
+        font-size: 0.6rem;
       }
 
       /* スタート画面 */
       .start-content {
-        padding: 1.2rem 0.8rem;
-        max-width: 95%;
-        max-height: 90vh;
+        padding: 1rem 0.6rem;
+        max-width: 90%;
+        max-height: 85vh;
         overflow-y: auto;
       }
 
       .start-content h2 {
-        font-size: 1.1rem;
-        margin-bottom: 0.8rem;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
       }
 
       .rules-list {
-        gap: 0.4rem;
+        gap: 0.3rem;
       }
 
       .rule-option {
-        padding: 0.5rem;
-        font-size: 0.7rem;
+        padding: 0.4rem;
+        font-size: 0.6rem;
+      }
+
+      .rule-checkbox {
+        width: 16px;
+        height: 16px;
       }
 
       /* じゃんけん画面 */
       .janken-content {
-        padding: 1.2rem 0.8rem;
-        max-width: 95%;
+        padding: 1rem 0.6rem;
+        max-width: 90%;
       }
 
       .janken-content h2 {
-        font-size: 1.1rem;
-        margin-bottom: 0.8rem;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
       }
 
       .janken-opponent-avatar {
-        width: 55px;
-        height: 55px;
-        font-size: 1.2rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.1rem;
       }
 
       .janken-opponent-name {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
       }
 
       .janken-choices {
-        gap: 0.7rem;
+        gap: 0.5rem;
       }
 
       .janken-btn {
-        width: 55px;
-        height: 55px;
-        font-size: 1.6rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.4rem;
       }
 
       /* エフェクト */
       .revolution-indicator,
       #shibari-indicator {
-        font-size: 1.8rem;
-        padding: 0.8rem 1.5rem;
+        font-size: 1.5rem;
+        padding: 0.6rem 1.2rem;
       }
 
       /* ヘルプモーダル */
       .help-content {
-        padding: 1.2rem 0.8rem;
-        max-width: 95%;
-        max-height: 90vh;
+        padding: 1rem 0.6rem;
+        max-width: 90%;
+        max-height: 85vh;
         overflow-y: auto;
       }
 
       .help-content h2 {
-        font-size: 1.2rem;
-        margin-bottom: 0.8rem;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
       }
 
       .help-content h3 {
-        font-size: 0.95rem;
-        margin-top: 0.8rem;
+        font-size: 0.85rem;
+        margin-top: 0.6rem;
       }
 
       .help-content p,
       .help-content li {
-        font-size: 0.7rem;
-        line-height: 1.4;
+        font-size: 0.6rem;
+        line-height: 1.3;
       }
 
       .help-content ul {
-        padding-left: 1.2rem;
+        padding-left: 1rem;
       }
     }
   </style>
