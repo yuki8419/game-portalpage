@@ -1478,14 +1478,25 @@
     /* Responsive */
     @media (max-width: 600px) {
       body {
-        padding: 0.3rem;
+        padding: 0;
+        margin: 0;
         overflow-x: hidden;
+        min-height: 100vh;
+        height: auto;
       }
 
       .game-table {
-        border-radius: 12px;
-        border: 4px solid #3e2723;
+        border-radius: 0;
+        border: none;
+        border-top: 4px solid #3e2723;
+        border-bottom: 4px solid #3e2723;
         min-height: 100vh;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-shadow: none;
+      }
+
+      .game-container {
         overflow-x: hidden;
       }
 
@@ -1508,9 +1519,19 @@
       }
 
       .nav-btn {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         font-size: 1.2rem;
+      }
+
+      .home-btn {
+        top: 0.5rem;
+        left: 0.5rem;
+      }
+
+      .help-btn {
+        top: 0.5rem;
+        right: 0.5rem;
       }
 
       .game-header {
@@ -1522,277 +1543,295 @@
         margin-bottom: 0.5rem;
       }
 
-      /* カードを大きく、タップしやすく */
+      /* カードサイズ調整 */
       .card {
-        width: 50px;
-        height: 70px;
-        font-size: 0.75rem;
+        width: 45px;
+        height: 63px;
+        font-size: 0.7rem;
       }
 
       .card .suit {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
       }
 
       .card .rank {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
       }
 
       .card .corner-rank {
-        font-size: 0.65rem;
-        top: 3px;
-        left: 4px;
+        font-size: 0.6rem;
+        top: 2px;
+        left: 3px;
       }
 
       .card .corner-suit {
-        font-size: 0.5rem;
-        top: 12px;
-        left: 4px;
+        font-size: 0.45rem;
+        top: 10px;
+        left: 3px;
       }
 
       .card.selected {
-        transform: translateY(-12px);
+        transform: translateY(-10px);
       }
 
       .card.field-card {
-        width: 54px;
-        height: 75px;
+        width: 50px;
+        height: 70px;
       }
 
       /* 対戦相手エリア */
       .opponents-area {
-        gap: 0.4rem;
-        padding-top: 3rem;
-        margin-bottom: 0.5rem;
+        gap: 0.3rem;
+        padding-top: 3.5rem;
+        margin-bottom: 0.3rem;
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .opponent {
-        min-width: 70px;
-        padding: 0.5rem 0.7rem;
+        min-width: 65px;
+        padding: 0.4rem 0.6rem;
+        flex: 0 1 auto;
       }
 
       .opponent-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 0.7rem;
+        width: 30px;
+        height: 30px;
+        font-size: 0.65rem;
       }
 
       .opponent-title {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
       }
 
       .opponent-name {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
       }
 
       .opponent-cards {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
       }
 
-      /* フィールドエリア - 縦スペース削減 */
+      /* フィールドエリア */
       .field-area {
-        min-height: 100px;
-        padding: 0.6rem 0.4rem;
-        margin-bottom: 0.5rem;
+        min-height: 90px;
+        padding: 0.5rem 0.3rem;
+        margin-bottom: 0.3rem;
       }
 
       .field-label {
-        font-size: 0.6rem;
-        top: 0.3rem;
-        left: 0.5rem;
+        font-size: 0.55rem;
+        top: 0.25rem;
+        left: 0.4rem;
       }
 
       .revolution-status {
-        font-size: 0.65rem;
-        padding: 0.2rem 0.5rem;
-        top: 0.3rem;
-        right: 0.5rem;
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+        top: 0.25rem;
+        right: 0.4rem;
       }
 
       #shibari-status {
-        top: 1.8rem !important;
+        top: 1.6rem !important;
       }
 
       .field-content {
-        gap: 0.5rem;
-        margin: 0.3rem 0;
+        gap: 0.4rem;
+        margin: 0.2rem 0;
+        flex-direction: column;
       }
 
       .field-cards {
-        min-height: 60px;
-        gap: 4px;
+        min-height: 55px;
+        gap: 3px;
         flex-wrap: wrap;
         min-width: auto;
         width: 100%;
+        justify-content: center;
       }
 
       .field-info {
-        font-size: 0.65rem;
-        margin-top: 0.3rem;
+        font-size: 0.6rem;
+        margin-top: 0.2rem;
       }
 
-      /* ボタンを大きく、タップしやすく */
+      /* ボタンサイズ調整 */
       .btn {
-        padding: 0.7rem 1.3rem;
-        font-size: 0.85rem;
-        min-width: 70px;
+        padding: 0.6rem 1rem;
+        font-size: 0.75rem;
+        min-width: 60px;
         touch-action: manipulation;
       }
 
       .field-btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.7rem;
       }
 
       .diff-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.65rem;
+        padding: 0.35rem 0.6rem;
+        font-size: 0.6rem;
         flex: 1;
+        min-width: 0;
       }
 
       .diff-label {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
       }
 
       /* プレイヤーエリア */
       .player-area {
-        padding: 0.6rem 0.5rem;
+        padding: 0.5rem 0.3rem;
       }
 
       .player-name {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
       }
 
       .player-status {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
       }
 
       .player-hand {
-        min-height: 60px;
-        gap: 3px;
-        padding: 0.5rem 0.3rem;
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+        min-height: 55px;
+        gap: 2px;
+        padding: 0.4rem 0.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
         justify-items: center;
+        max-width: 100%;
       }
 
       .message {
-        font-size: 0.75rem;
-        margin: 0.5rem 0;
-        padding: 0.4rem;
+        font-size: 0.7rem;
+        margin: 0.3rem 0;
+        padding: 0.3rem;
       }
 
       /* 吹き出し */
       .speech-bubble {
-        min-width: 80px;
-        max-width: 140px;
-        padding: 0.4rem 0.6rem;
+        min-width: 70px;
+        max-width: 120px;
+        padding: 0.3rem 0.5rem;
       }
 
       .speech-text {
-        font-size: 0.65rem;
-        line-height: 1.3;
+        font-size: 0.6rem;
+        line-height: 1.25;
       }
 
       /* ゲームオーバー画面 */
       .game-over {
-        padding: 1.5rem 1rem;
-        max-width: 90%;
+        padding: 1.2rem 0.8rem;
+        max-width: 95%;
       }
 
       .game-over h2 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
       }
 
       .results-list {
-        gap: 0.5rem;
+        gap: 0.4rem;
       }
 
       .result-item {
-        padding: 0.6rem;
-        font-size: 0.75rem;
+        padding: 0.5rem;
+        font-size: 0.7rem;
       }
 
       .result-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 0.75rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
       }
 
       /* スタート画面 */
       .start-content {
-        padding: 1.5rem 1rem;
-        max-width: 90%;
+        padding: 1.2rem 0.8rem;
+        max-width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
       }
 
       .start-content h2 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
       }
 
       .rules-list {
-        gap: 0.5rem;
+        gap: 0.4rem;
       }
 
       .rule-option {
-        padding: 0.6rem;
-        font-size: 0.75rem;
+        padding: 0.5rem;
+        font-size: 0.7rem;
       }
 
       /* じゃんけん画面 */
       .janken-content {
-        padding: 1.5rem 1rem;
-        max-width: 90%;
+        padding: 1.2rem 0.8rem;
+        max-width: 95%;
       }
 
       .janken-content h2 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
       }
 
       .janken-opponent-avatar {
-        width: 60px;
-        height: 60px;
-        font-size: 1.3rem;
+        width: 55px;
+        height: 55px;
+        font-size: 1.2rem;
       }
 
       .janken-opponent-name {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
       }
 
       .janken-choices {
-        gap: 0.8rem;
+        gap: 0.7rem;
       }
 
       .janken-btn {
-        width: 60px;
-        height: 60px;
-        font-size: 1.8rem;
+        width: 55px;
+        height: 55px;
+        font-size: 1.6rem;
       }
 
       /* エフェクト */
       .revolution-indicator,
       #shibari-indicator {
-        font-size: 2rem;
-        padding: 1rem 2rem;
+        font-size: 1.8rem;
+        padding: 0.8rem 1.5rem;
       }
 
       /* ヘルプモーダル */
       .help-content {
-        padding: 1.5rem 1rem;
-        max-width: 90%;
-        max-height: 85vh;
+        padding: 1.2rem 0.8rem;
+        max-width: 95%;
+        max-height: 90vh;
         overflow-y: auto;
       }
 
       .help-content h2 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
       }
 
       .help-content h3 {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        margin-top: 0.8rem;
       }
 
       .help-content p,
       .help-content li {
-        font-size: 0.75rem;
-        line-height: 1.5;
+        font-size: 0.7rem;
+        line-height: 1.4;
+      }
+
+      .help-content ul {
+        padding-left: 1.2rem;
       }
     }
   </style>
