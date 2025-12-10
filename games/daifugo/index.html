@@ -1133,46 +1133,111 @@
       background: var(--bg-panel);
       border-radius: 20px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-      min-width: 320px;
+      min-width: 340px;
+      max-width: 400px;
+    }
+
+    .janken-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .janken-header-deco {
+      display: block;
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
     }
 
     .janken-content h2 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       color: var(--text-dark);
-      letter-spacing: 0.1em;
-      margin-bottom: 1.5rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 0;
       font-weight: 900;
     }
 
-    .janken-opponent {
-      margin-bottom: 2rem;
+    /* 3人の対戦相手表示 */
+    .janken-opponents {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .janken-opponent-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.8rem;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      min-width: 80px;
     }
 
     .janken-opponent-avatar {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 0.8rem;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 1.4rem;
       font-weight: 900;
       color: var(--white);
       border: 3px solid var(--gold);
+      margin-bottom: 0.5rem;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
     }
 
     .janken-opponent-name {
-      font-size: 1rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 0.2rem;
+    }
+
+    .janken-opponent-title {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* 煽りセリフ */
+    .janken-taunt {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      padding: 0.8rem;
+      background: #fff8e1;
+      border-radius: 10px;
+      border: 2px solid #ffd54f;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      min-height: 2.5rem;
+    }
+
+    .janken-taunt:empty {
+      display: none;
+    }
+
+    /* じゃんけんアクション部分 */
+    .janken-action {
+      margin-bottom: 1rem;
+    }
+
+    .janken-instruction {
+      font-size: 0.95rem;
       font-weight: 700;
       color: var(--text-dark);
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
     }
 
     .janken-choices {
       display: flex;
       gap: 1rem;
       justify-content: center;
-      margin-bottom: 1.5rem;
     }
 
     .janken-btn {
@@ -1838,13 +1903,46 @@
       }
 
       /* じゃんけん画面 */
+      .janken-content {
+        min-width: auto;
+        max-width: 95%;
+        padding: 1.2rem;
+      }
+
+      .janken-content h2 {
+        font-size: 1.1rem;
+      }
+
+      .janken-opponents {
+        gap: 0.5rem;
+      }
+
+      .janken-opponent-card {
+        padding: 0.5rem;
+        min-width: 70px;
+      }
+
       .janken-opponent-avatar {
-        width: 56px;
-        height: 56px;
-        font-size: 1.2rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
       }
 
       .janken-opponent-name {
+        font-size: 0.7rem;
+      }
+
+      .janken-opponent-title {
+        font-size: 0.55rem;
+      }
+
+      .janken-taunt {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+        margin-bottom: 1rem;
+      }
+
+      .janken-instruction {
         font-size: 0.85rem;
       }
 
@@ -2017,25 +2115,32 @@
   <!-- Janken Modal -->
   <div class="janken-overlay" id="janken-modal">
     <div class="janken-content">
-      <h2>じゃんけんで先攻を決めよう！</h2>
-      <div class="janken-opponent" id="janken-opponent">
-        <div class="janken-opponent-avatar" id="janken-opponent-avatar"></div>
-        <div class="janken-opponent-name" id="janken-opponent-name"></div>
+      <div class="janken-header">
+        <span class="janken-header-deco">♠ ♥ ♦ ♣</span>
+        <h2>本日の対戦相手</h2>
       </div>
-      <div class="janken-choices">
-        <button class="janken-btn" data-choice="rock">
-          <span class="janken-icon">✊</span>
-          <span class="janken-label">グー</span>
-        </button>
-        <button class="janken-btn" data-choice="paper">
-          <span class="janken-icon">✋</span>
-          <span class="janken-label">パー</span>
-        </button>
-        <button class="janken-btn" data-choice="scissors">
-          <span class="janken-icon">✌️</span>
-          <span class="janken-label">チョキ</span>
-        </button>
+
+      <div class="janken-opponents" id="janken-opponents">
+        <!-- 3人のキャラがJSで挿入される -->
       </div>
+
+      <div class="janken-taunt" id="janken-taunt"></div>
+
+      <div class="janken-action">
+        <p class="janken-instruction">じゃんけんで先攻を決めろ！</p>
+        <div class="janken-choices">
+          <button class="janken-btn" data-choice="rock">
+            <span class="janken-icon">✊</span>
+          </button>
+          <button class="janken-btn" data-choice="paper">
+            <span class="janken-icon">✋</span>
+          </button>
+          <button class="janken-btn" data-choice="scissors">
+            <span class="janken-icon">✌️</span>
+          </button>
+        </div>
+      </div>
+
       <div class="janken-result" id="janken-result"></div>
       <div class="janken-dialogue" id="janken-dialogue"></div>
     </div>
@@ -2291,8 +2396,8 @@
     const redFlash = document.getElementById('red-flash');
     const startModal = document.getElementById('start-modal');
     const jankenModal = document.getElementById('janken-modal');
-    const jankenOpponentAvatar = document.getElementById('janken-opponent-avatar');
-    const jankenOpponentName = document.getElementById('janken-opponent-name');
+    const jankenOpponentsEl = document.getElementById('janken-opponents');
+    const jankenTauntEl = document.getElementById('janken-taunt');
     const jankenResult = document.getElementById('janken-result');
 
     // エフェクト関数
@@ -2694,19 +2799,43 @@
     let jankenOpponentIndex = -1;
     let jankenResolve = null;
 
+    // じゃんけん開始時の煽りセリフ
+    const JANKEN_TAUNTS = [
+      '「フッ…こいつに勝てるとでも？」',
+      '「ハハハ、カモがネギを背負ってきた！」',
+      '「おやおや…可愛そうに…」',
+      '「私たちに挑むとは愚かな…」',
+      '「フン、すぐ終わらせてやる」'
+    ];
+
     async function playJanken() {
       return new Promise((resolve) => {
         jankenResolve = resolve;
 
-        // Select random CPU opponent
+        // Select random CPU opponent for janken result
         jankenOpponentIndex = Math.floor(Math.random() * 3) + 1;
-        const opponent = players[jankenOpponentIndex];
 
-        // Show janken modal
-        jankenOpponentAvatar.textContent = opponent.avatar;
-        jankenOpponentAvatar.style.background = opponent.gradient;
-        jankenOpponentName.textContent = opponent.name;
+        // Render all 3 CPU opponents
+        jankenOpponentsEl.innerHTML = '';
+        for (let i = 1; i <= 3; i++) {
+          const cpu = players[i];
+          const card = document.createElement('div');
+          card.className = 'janken-opponent-card';
+          card.innerHTML = `
+            <div class="janken-opponent-avatar" style="background: ${cpu.gradient}">${cpu.avatar}</div>
+            <div class="janken-opponent-name">${cpu.name}</div>
+            <div class="janken-opponent-title">${cpu.title}</div>
+          `;
+          jankenOpponentsEl.appendChild(card);
+        }
+
+        // Show random taunt
+        jankenTauntEl.textContent = JANKEN_TAUNTS[Math.floor(Math.random() * JANKEN_TAUNTS.length)];
+
         jankenResult.textContent = '';
+        const jankenDialogue = document.getElementById('janken-dialogue');
+        if (jankenDialogue) jankenDialogue.textContent = '';
+
         jankenModal.classList.add('show');
       });
     }
@@ -2738,13 +2867,10 @@
       const cpuChoice = choices[Math.floor(Math.random() * 3)];
       const opponent = players[jankenOpponentIndex];
       const jankenDialogue = document.getElementById('janken-dialogue');
-      const jankenAvatar = document.getElementById('janken-opponent-avatar');
 
-      const choiceNames = {
-        rock: 'グー',
-        paper: 'パー',
-        scissors: 'チョキ'
-      };
+      // 選択されたCPUのアバター要素を取得
+      const avatarCards = jankenOpponentsEl.querySelectorAll('.janken-opponent-card');
+      const selectedAvatar = avatarCards[jankenOpponentIndex - 1]?.querySelector('.janken-opponent-avatar');
 
       const choiceIcons = {
         rock: '✊',
@@ -2752,9 +2878,11 @@
         scissors: '✌️'
       };
 
-      // じゃんけんアニメーション
-      jankenAvatar.classList.add('shake');
-      setTimeout(() => jankenAvatar.classList.remove('shake'), 500);
+      // じゃんけんアニメーション（選択されたキャラのみ）
+      if (selectedAvatar) {
+        selectedAvatar.classList.add('shake');
+        setTimeout(() => selectedAvatar.classList.remove('shake'), 500);
+      }
 
       // 結果判定
       let result = '';
@@ -2782,23 +2910,16 @@
         result = `あなたの勝ち！(${choiceIcons[playerChoice]} vs ${choiceIcons[cpuChoice]})`;
         playerStarts = true;
         dialogueKey = 'win';
-        jankenAvatar.classList.add('shake');
       } else {
         result = `${opponent.name}の勝ち！(${choiceIcons[playerChoice]} vs ${choiceIcons[cpuChoice]})`;
         playerStarts = false;
         dialogueKey = 'lose';
-        jankenAvatar.classList.add('pulse');
       }
 
       jankenResult.textContent = result;
 
       const dialogue = JANKEN_DIALOGUES[opponent.personality][dialogueKey];
       jankenDialogue.textContent = dialogue[Math.floor(Math.random() * dialogue.length)];
-
-      // アニメーションクリーンアップ
-      setTimeout(() => {
-        jankenAvatar.classList.remove('shake', 'pulse');
-      }, 600);
 
       // Close modal and resolve
       setTimeout(() => {
