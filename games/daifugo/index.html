@@ -1691,53 +1691,54 @@
         font-size: 0.75rem;
       }
 
-      /* ===== 手札 - 扇形に重ねて表示 ===== */
+      /* ===== 手札 - 横並び表示 ===== */
       .player-hand {
         flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
-        position: relative;
+        flex-wrap: wrap;
+        gap: 4px;
         min-height: 0;
-        padding: 0.5rem 0;
-        overflow: visible;
+        padding: 0.5rem;
+        overflow-y: auto;
       }
 
-      /* 手札カード - 重ねて配置 */
+      /* 手札カード */
       .player-hand .card {
-        position: absolute;
-        width: 48px;
-        height: 67px;
+        width: 44px;
+        height: 62px;
+        flex-shrink: 0;
         transition: transform 0.15s ease, box-shadow 0.15s ease;
         cursor: pointer;
         touch-action: manipulation;
       }
 
       .player-hand .card .suit {
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
 
       .player-hand .card .rank {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
       }
 
       .player-hand .card .corner-rank {
-        font-size: 0.6rem;
-        top: 3px;
-        left: 4px;
+        font-size: 0.55rem;
+        top: 2px;
+        left: 3px;
       }
 
       .player-hand .card .corner-suit {
-        font-size: 0.5rem;
-        top: 12px;
-        left: 4px;
+        font-size: 0.45rem;
+        top: 10px;
+        left: 3px;
       }
 
-      /* 選択時 - 大きく上に飛び出す＆光る */
+      /* 選択時 - 上に飛び出す＆光る */
       .player-hand .card.selected {
-        transform: translateY(-20px) scale(1.08) !important;
-        box-shadow: 0 8px 20px rgba(255, 200, 0, 0.6), 0 0 15px rgba(255, 200, 0, 0.4);
-        z-index: 100 !important;
+        transform: translateY(-8px) scale(1.05);
+        box-shadow: 0 6px 16px rgba(255, 200, 0, 0.6), 0 0 12px rgba(255, 200, 0, 0.4);
+        z-index: 10;
       }
 
       /* ===== アクションボタン - 画面下部に固定 ===== */
@@ -3005,9 +3006,6 @@
         return;
       }
 
-      const cardCount = player.hand.length;
-      const mobile = isMobile();
-
       player.hand.forEach((card, index) => {
         const cardEl = createCardElement(card);
         cardEl.dataset.index = index;
@@ -3019,30 +3017,6 @@
 
         if (selectedCards.includes(index)) {
           cardEl.classList.add('selected');
-        }
-
-        // モバイル: 扇形配置
-        if (mobile && cardCount > 0) {
-          const maxSpread = Math.min(280, window.innerWidth - 60); // 画面幅に応じた最大幅
-          const cardWidth = 48;
-          const overlap = Math.min(cardWidth * 0.7, maxSpread / cardCount); // カード重なり量
-          const totalWidth = overlap * (cardCount - 1) + cardWidth;
-          const startX = -totalWidth / 2 + cardWidth / 2;
-
-          // 扇形の角度計算
-          const maxAngle = Math.min(25, cardCount * 2); // 最大角度
-          const angleStep = cardCount > 1 ? (maxAngle * 2) / (cardCount - 1) : 0;
-          const angle = cardCount > 1 ? -maxAngle + angleStep * index : 0;
-
-          // 扇形の高さ（アーチ状に）
-          const centerIndex = (cardCount - 1) / 2;
-          const distFromCenter = Math.abs(index - centerIndex);
-          const arcHeight = distFromCenter * distFromCenter * 1.5;
-
-          const xPos = startX + overlap * index;
-          cardEl.style.left = `calc(50% + ${xPos}px)`;
-          cardEl.style.transform = `translateX(-50%) rotate(${angle}deg) translateY(${arcHeight}px)`;
-          cardEl.style.zIndex = index;
         }
 
         if (currentPlayerIndex === 0 && gameActive) {
