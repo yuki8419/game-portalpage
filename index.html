@@ -858,6 +858,14 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
     }
 
+    /* カード全体をクリック可能にするリンク */
+    .game-card__link {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      text-decoration: none;
+    }
+
     .game-card__preview {
       position: relative;
       aspect-ratio: 16 / 10;
@@ -896,6 +904,7 @@
       align-items: center;
       justify-content: center;
       transition: background 0.3s ease;
+      pointer-events: none;
     }
 
     .game-card:hover .game-card__overlay {
@@ -909,22 +918,17 @@
       padding: 0.8rem 2rem;
       background: #fff;
       color: var(--color-text);
-      text-decoration: none;
       font-size: 0.85rem;
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       border-radius: 2px;
+      pointer-events: none;
     }
 
     .game-card:hover .game-card__play-btn {
       opacity: 1;
       transform: scale(1);
-    }
-
-    .game-card__play-btn:hover {
-      background: var(--color-text);
-      color: #fff;
     }
 
     .game-card__info {
@@ -1090,10 +1094,11 @@
     <div class="games-grid">
       <!-- Game Card: Othello -->
       <article class="game-card">
+        <a href="games/othello/" class="game-card__link" aria-label="Othelloをプレイ"></a>
         <div class="game-card__preview">
           <img src="images/othello_thumbnail.svg" alt="Othello Game Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
-            <a href="games/othello/" class="game-card__play-btn">Play</a>
+            <span class="game-card__play-btn">Play</span>
           </div>
         </div>
         <div class="game-card__info">
@@ -1108,10 +1113,11 @@
 
       <!-- Game Card: Shooting -->
       <article class="game-card">
+        <a href="games/shooting/" class="game-card__link" aria-label="Space Shooterをプレイ"></a>
         <div class="game-card__preview">
           <img src="images/space_shooter_thumbnail.svg" alt="Space Shooter Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
-            <a href="games/shooting/" class="game-card__play-btn">Play</a>
+            <span class="game-card__play-btn">Play</span>
           </div>
         </div>
         <div class="game-card__info">
@@ -1126,10 +1132,11 @@
 
       <!-- Game Card: Tetris -->
       <article class="game-card">
+        <a href="games/tetris/" class="game-card__link" aria-label="Tetrisをプレイ"></a>
         <div class="game-card__preview">
           <img src="images/tetris_thumbnail.svg" alt="Tetris Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
-            <a href="games/tetris/" class="game-card__play-btn">Play</a>
+            <span class="game-card__play-btn">Play</span>
           </div>
         </div>
         <div class="game-card__info">
@@ -1144,10 +1151,11 @@
 
       <!-- Game Card: Gomoku -->
       <article class="game-card">
+        <a href="games/gomoku/" class="game-card__link" aria-label="Gomokuをプレイ"></a>
         <div class="game-card__preview">
           <img src="images/gomoku_thumbnail.svg" alt="Gomoku Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
-            <a href="games/gomoku/" class="game-card__play-btn">Play</a>
+            <span class="game-card__play-btn">Play</span>
           </div>
         </div>
         <div class="game-card__info">
@@ -1162,10 +1170,11 @@
 
       <!-- Game Card: Minesweeper -->
       <article class="game-card">
+        <a href="games/minesweeper/" class="game-card__link" aria-label="Minesweeperをプレイ"></a>
         <div class="game-card__preview">
           <img src="images/minesweeper_thumbnail.svg" alt="Minesweeper Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
-            <a href="games/minesweeper/" class="game-card__play-btn">Play</a>
+            <span class="game-card__play-btn">Play</span>
           </div>
         </div>
         <div class="game-card__info">
@@ -1180,10 +1189,11 @@
 
       <!-- Game Card: Daifugo -->
       <article class="game-card">
+        <a href="games/daifugo/" class="game-card__link" aria-label="Daifugoをプレイ"></a>
         <div class="game-card__preview">
           <img src="images/daifugo_thumbnail.svg" alt="Daifugo Thumbnail" class="game-card__image">
           <div class="game-card__overlay">
-            <a href="games/daifugo/" class="game-card__play-btn">Play</a>
+            <span class="game-card__play-btn">Play</span>
           </div>
         </div>
         <div class="game-card__info">
