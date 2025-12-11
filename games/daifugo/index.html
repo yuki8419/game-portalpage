@@ -115,17 +115,6 @@
     }
 
     .home-btn { left: 0.75rem; }
-    .reset-btn {
-      left: 3.5rem;
-      font-size: 1.1rem;
-      color: var(--text-dark);
-      cursor: pointer;
-    }
-    .reset-btn svg {
-      width: 18px;
-      height: 18px;
-      fill: var(--text-dark);
-    }
     .help-btn {
       right: 0.75rem;
       font-size: 1.1rem;
@@ -899,6 +888,80 @@
       100% { opacity: 0; transform: translate(-50%, -50%) scale(12); border-width: 1px; }
     }
 
+    /* プレイヤー上がりエフェクト - 勝利演出 */
+    .player-finish-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 90;
+      opacity: 0;
+    }
+
+    .player-finish-overlay.show {
+      animation: finishGlow 1.5s ease-out forwards;
+    }
+
+    @keyframes finishGlow {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .player-finish-text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--white);
+      text-shadow:
+        4px 4px 0 #000,
+        -2px -2px 0 var(--gold),
+        0 0 30px rgba(255, 215, 0, 0.8);
+      z-index: 98;
+      pointer-events: none;
+      opacity: 0;
+      white-space: nowrap;
+    }
+
+    .player-finish-text.show {
+      animation: finishTextPop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes finishTextPop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-10deg); }
+      40% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(5deg); }
+      60% { transform: translate(-50%, -50%) scale(0.95) rotate(-2deg); }
+      80% { transform: translate(-50%, -50%) scale(1.05) rotate(1deg); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1) rotate(0deg) translateY(-30px); }
+    }
+
+    .confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 89;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+    }
+
+    .confetti.show {
+      animation: confettiFall 2s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+    }
+
     /* Revolution indicator - 漫画風 */
     .revolution-indicator {
       position: fixed;
@@ -1424,6 +1487,49 @@
     .results-list li:first-child {
       color: var(--gold-dim);
       font-weight: 700;
+    }
+
+    /* 煽りエリア */
+    .taunt-area {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+      border: 2px solid rgba(220, 38, 38, 0.3);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .taunt-text {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #b91c1c;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .game-over-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     /* Help modal */
@@ -2054,19 +2160,13 @@
 </head>
 
 <body>
-  <a href="../../" class="nav-btn home-btn">
+  <a href="../../" class="nav-btn home-btn" title="ホームに戻る">
     <svg viewBox="0 0 24 24">
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
     </svg>
   </a>
 
-  <button class="nav-btn reset-btn" id="reset-btn" title="最初からやり直す">
-    <svg viewBox="0 0 24 24">
-      <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
-    </svg>
-  </button>
-
-  <button class="nav-btn help-btn" id="help-btn">?</button>
+  <button class="nav-btn help-btn" id="help-btn" title="ヘルプ">?</button>
 
   <div class="game-table">
   <header class="game-header">
@@ -2137,6 +2237,9 @@
   <div class="speed-lines" id="speed-lines"></div>
   <div class="impact-wave" id="impact-wave"></div>
   <div class="red-flash" id="red-flash"></div>
+  <div class="player-finish-overlay" id="player-finish-overlay"></div>
+  <div class="player-finish-text" id="player-finish-text">上がり！</div>
+  <div class="confetti-container" id="confetti-container"></div>
 
   <!-- Start Screen Modal -->
   <div class="start-overlay" id="start-modal">
@@ -2234,7 +2337,11 @@
     <div class="game-over-content">
       <h2>ゲーム終了</h2>
       <ul class="results-list" id="results-list"></ul>
-      <button class="btn btn-primary" id="play-again-btn">もう一度遊ぶ</button>
+      <div class="taunt-area" id="taunt-area"></div>
+      <div class="game-over-buttons">
+        <button class="btn btn-primary" id="play-again-btn">もう一度遊ぶ</button>
+        <button class="btn btn-secondary" id="back-to-start-btn">最初に戻る</button>
+      </div>
     </div>
   </div>
 
@@ -2480,6 +2587,9 @@
     const speedLines = document.getElementById('speed-lines');
     const impactWave = document.getElementById('impact-wave');
     const redFlash = document.getElementById('red-flash');
+    const playerFinishOverlay = document.getElementById('player-finish-overlay');
+    const playerFinishText = document.getElementById('player-finish-text');
+    const confettiContainer = document.getElementById('confetti-container');
     const startModal = document.getElementById('start-modal');
     const jankenModal = document.getElementById('janken-modal');
     const jankenOpponentsEl = document.getElementById('janken-opponents');
@@ -2517,6 +2627,64 @@
       setTimeout(() => document.body.classList.remove('screen-shake'), 600);
     }
 
+    // プレイヤー上がりエフェクト
+    async function showPlayerFinishEffect(rank) {
+      const rankTexts = ['大富豪！', '富豪！', '貧民...', '大貧民...'];
+      const rankText = rankTexts[rank - 1] || '上がり！';
+
+      // テキストを設定
+      playerFinishText.textContent = rankText;
+
+      // 紙吹雪を生成
+      createConfetti();
+
+      // オーバーレイとテキストを表示
+      playerFinishOverlay.classList.remove('show');
+      playerFinishText.classList.remove('show');
+      void playerFinishOverlay.offsetWidth;
+
+      playerFinishOverlay.classList.add('show');
+      playerFinishText.classList.add('show');
+
+      // 衝撃波
+      showImpactWave();
+
+      // エフェクト終了後にクリーンアップ
+      setTimeout(() => {
+        playerFinishOverlay.classList.remove('show');
+        playerFinishText.classList.remove('show');
+        confettiContainer.innerHTML = '';
+      }, 2000);
+    }
+
+    // 紙吹雪生成
+    function createConfetti() {
+      confettiContainer.innerHTML = '';
+      const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ff9ff3', '#54a0ff'];
+
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.animationDuration = (1.5 + Math.random()) + 's';
+
+        // ランダムな形状
+        if (Math.random() > 0.5) {
+          confetti.style.borderRadius = '50%';
+        } else {
+          confetti.style.width = '8px';
+          confetti.style.height = '12px';
+        }
+
+        confettiContainer.appendChild(confetti);
+
+        // アニメーション開始
+        setTimeout(() => confetti.classList.add('show'), 10);
+      }
+    }
+
     // カードプレイ時のエフェクト
     function showPlayEffect(cards, isRevolution = false) {
       const cardValue = getEffectiveValue(cards[0].value);
@@ -2540,7 +2708,7 @@
     // Speech bubble state
     const activeBubbles = new Map(); // playerIndex -> timeout
 
-    // Character dialogues
+    // Character dialogues - セリフバリエーション大幅増加
     const CHARACTER_DIALOGUES = {
       arrogant: {
         // 財前 - 傲慢な金持ち
@@ -2566,27 +2734,57 @@
           'ハッ！その程度か、笑わせるな',
           'ふん、貧弱だな。貴様らしいわ',
           'それで勝てると？愚かな',
-          '哀れだな...見ていて情けない'
+          '哀れだな...見ていて情けない',
+          'その程度の手で私に勝てるつもりか？',
+          'ふん、弱いカードだな',
+          '話にならんな',
+          'なんだそのカードは？ゴミか？',
+          'くだらん...時間の無駄だ',
+          'そんな手で私を倒せるとでも？',
+          'ふっ...子供騙しだな',
+          '貴様、本気でやっているのか？',
+          'その程度か...失望したぞ',
+          'ハッ、弱すぎて眠くなってきたわ'
         ],
         reactStrong: [
           'チッ...小癪な',
           'ほう...少しは見どころがあるな',
           'ぐぬ...生意気な真似を',
-          'フン、まぐれだろう'
+          'フン、まぐれだろう',
+          'なっ...！このカードを...！',
+          'くっ...やるではないか',
+          '貴様...どこでそのカードを',
+          'ふん...少しは骨があるようだな',
+          'この私を焦らせるとは...',
+          'チッ...運だけはいいようだな',
+          'ぐっ...だが次はこうはいかん！',
+          '貴様...調子に乗るなよ',
+          'なかなかやりおる...だが！',
+          'ふむ...少しは認めてやろう'
         ],
         reactRevolution: [
           'な、なんだと!? 貴様...！',
           'バカな！まさか貴様が革命を...',
-          'くっ...調子に乗るなよ！'
+          'くっ...調子に乗るなよ！',
+          '貴様...！許さんぞ！',
+          'このっ...！覚えておれ！'
         ],
         reactPass: [
           'ハッ、逃げたか',
           'ふん、諦めたようだな',
-          '賢明な判断だ、貴様には無理だ'
+          '賢明な判断だ、貴様には無理だ',
+          '分かったか、これが実力の差だ',
+          'ふっ...それでいい、身の程を知れ'
+        ],
+        reactPlayerFinish: [
+          'な...なんだと...!? バカな...！',
+          'くっ...この私が...負けただと...！',
+          '貴様...！覚えておれ...！',
+          'ありえん...この財前様が...'
         ]
       },
       rich_arrogant: {
-        // アブドゥル - 豪快な成金
+        // アラブ - 豪快な成金
         play: [
           'ハハハ！貴様には無理だ！',
           'フハハハ！見ておれ、これが富の力だ！',
@@ -2609,23 +2807,53 @@
           'ハハハ！その程度か！笑わせるな！',
           'フン、貧弱な手だな！貴様らしいわ！',
           'それで勝てると思ったのか？甘いぞ！',
-          '哀れだな...見ていて可哀想になるわ！'
+          '哀れだな...見ていて可哀想になるわ！',
+          'ハハハ！弱いカードだな！',
+          'その程度で私に挑むとは！',
+          'フン、話にならんな！',
+          'それが貴様の全力か？笑止！',
+          'ハハハ！もっとマシなカードはないのか！',
+          '貧乏人め、その程度だろうな！',
+          'そんな手では私には勝てん！',
+          'フハハ！これは楽勝だな！',
+          'その弱さ...哀れだな',
+          'ハハハ！金がないと強いカードも出せんか！'
         ],
         reactStrong: [
           'ほう...生意気な！',
           'フン、小癪な真似を！',
           'やるではないか...だが私には及ばん！',
-          'ほう、少しは楽しめそうだ'
+          'ほう、少しは楽しめそうだ',
+          'なっ...！そのカードを持っていたのか！',
+          'ぐっ...やりおるな！',
+          '貴様...なかなかやるではないか',
+          'フン...運がいいな貴様',
+          'ほう...面白くなってきた',
+          'だが私には勝てんぞ！',
+          'ぬう...小癪な！',
+          '貴様...調子に乗るなよ！',
+          'なるほど...やるな',
+          'ハハハ！いい手だ！だが私の方が上だ！'
         ],
         reactRevolution: [
           'な、なんだと!? 貴様...！',
           'バカな！まさか革命だと!?',
-          'ぐぬぬ...調子に乗るなよ！'
+          'ぐぬぬ...調子に乗るなよ！',
+          '貴様...！この私に革命を...！',
+          'ぬおお！？革命だと！？'
         ],
         reactPass: [
           'ハハハ！やはり無理だったか！',
           'フハハ、諦めたか貴様',
-          '賢い選択だ、貴様には不可能だからな'
+          '賢い選択だ、貴様には不可能だからな',
+          'ハハハ！その判断は正しいぞ！',
+          '諦めが早いな！ハハハ！'
+        ],
+        reactPlayerFinish: [
+          'ぬおお...！まさか...！',
+          'バカな...この私が負けるだと...！？',
+          '貴様...！覚えておれよ...！',
+          'ぐぬぬ...次は必ず...！'
         ]
       },
       emperor: {
@@ -2661,7 +2889,17 @@
           'それでは私には勝てませんよ',
           'おやおや...話になりませんね',
           'まあ...見ていて哀れですね',
-          '殺しますよ'
+          '殺しますよ',
+          'ほほほ...弱いですねえ',
+          'おやおや、そんなカードで？',
+          'まあ、つまらないですね',
+          'その程度ですか...がっかりです',
+          'ほほほ...お話になりません',
+          'おやおや...私を舐めていますか？',
+          'まあ、虫けらのような手ですね',
+          'ほほほ...ゴミのようですね',
+          '私の期待を裏切らないでくださいね',
+          'おやおや...眠くなってきましたよ'
         ],
         reactStrong: [
           'おや...やりますね',
@@ -2670,18 +2908,37 @@
           'ふむ...侮れませんね',
           'おやおや、少しは楽しめそうですね',
           '本気を出させていただきますよ',
-          '私をここまでコケにしたおバカさんは...あなたがはじめてですよ'
+          '私をここまでコケにしたおバカさんは...あなたがはじめてですよ',
+          'ほう...いい手ですね',
+          'おやおや...これは驚きました',
+          'まあ、少しは見直しましたよ',
+          'ほほほ...やるではありませんか',
+          'ふむ...面白くなってきましたね',
+          'おや...これは本気を出さないといけませんね',
+          'ほほほ...なかなかですね、褒めて差し上げますよ',
+          'まあ...お見事です。ですが...',
+          '少しは楽しめそうですね、ほほほ'
         ],
         reactRevolution: [
           'な、なんですって!?',
           'これは想定外ですね...おやおや',
           'ほほほ...面白くなってきましたね',
-          '許しませんよ...絶対に'
+          '許しませんよ...絶対に',
+          'まあ...これは困りましたね',
+          'おやおや...やってくれましたね'
         ],
         reactPass: [
           'ほほほ...お諦めですか',
           'おやおや、もうギブアップですか？',
-          'まあ、賢明な判断ですね'
+          'まあ、賢明な判断ですね',
+          'ほほほ...やはり無理でしたか',
+          'おやおや...残念でしたね'
+        ],
+        reactPlayerFinish: [
+          'おやおや...これは...まさか...',
+          'ほほほ...やられましたね',
+          'まあ...認めましょう、今回は',
+          'ふむ...次は本気を出しますよ'
         ]
       }
     };
@@ -2708,7 +2965,8 @@
           'アラブ「貴様ら...！覚えておれ...！」',
           '財前「くっ...屈辱だ...この財前が...」',
           'F「おやおや、お二人とも...そんなに悔しいのですか？ほほほ...」'
-        ]
+        ],
+        taunt: '...くっ...今回は認めてやる...だが次は容赦せんぞ！'
       },
       rank2: {
         // プレイヤーが2位
@@ -2721,7 +2979,8 @@
           '財前「ふん、2位とは...許容範囲だ」',
           'アラブ「2位...悪くない。次は必ず勝つ」',
           'F「まあ、2位とは...次は頂きますよ」'
-        ]
+        ],
+        taunt: 'ふん、惜しかったな。だが1位でなければ負けと同じだ！次こそ叩き潰してやる！'
       },
       rank3: {
         // プレイヤーが3位
@@ -2731,7 +2990,8 @@
           'F「ほほほ...最下位でなくて良かったですね」',
           '財前「3位か...まあビリよりはマシだな」',
           'F「まあ、3位...許容範囲です」'
-        ]
+        ],
+        taunt: '3位とはな...まあギリギリセーフといったところか。だがこの程度で満足するなよ？'
       },
       rank4: {
         // プレイヤーが最下位
@@ -2746,8 +3006,39 @@
           'F「来世に期待しておりますよ。ほーっほっほっほ！」',
           'アラブ「...まあ、次は頑張れ。ハハハ」',
           'F「まあ...本当にお弱いのですね。ほほほ」'
-        ]
+        ],
+        taunt: 'ふはははは！大貧民！！最下位おめでとう！！来世に期待だな！！ほーっほっほっほ！！'
       }
+    };
+
+    // ゲーム終了画面用の追加煽りセリフ
+    const GAME_OVER_TAUNTS = {
+      rank1: [
+        '今回は運が良かっただけだ...次は必ず叩き潰す！',
+        'くっ...この屈辱...忘れんぞ...！',
+        'ふん...貴様の実力など認めん...まぐれだ、まぐれ！',
+        '次こそ本気を出してやる...覚悟しておけ！'
+      ],
+      rank2: [
+        '惜しかったな！だが所詮2位は敗者だ！ふはは！',
+        'あと一歩だったな...だがその一歩が永遠に届かんのだ！',
+        '2位で喜ぶな！1位以外は全て負けだ！',
+        'まあまあの腕前だな...だが私たちには及ばんよ！'
+      ],
+      rank3: [
+        'ぎりぎり最下位を免れたか...ほほほ、お情けですよ',
+        '3位とは微妙な順位だな！勝ちでも負けでもない中途半端め！',
+        'まあ、ビリよりはマシだ...だがそれだけだ！',
+        '3位か...まあ我々の足元にも及ばんな！ハハハ！'
+      ],
+      rank4: [
+        '大貧民！！最弱！！ザコ！！もう帰れ！！ふはははは！！',
+        '最下位おめでとう！！これが貴様の実力だ！！来世に期待！！',
+        'ほーっほっほっほ！！哀れですねえ！！ゴミのようですねえ！！',
+        '貴様には大富豪は100年早いわ！！私のカードでも磨いておけ！！',
+        '弱い！弱すぎる！！こんな相手に時間を使って損した！！',
+        'この程度の腕で挑んでくるとは...愚かにもほどがある！！'
+      ]
     };
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -2771,9 +3062,27 @@
       const showSkip = players[0] && players[0].finished && gameActive;
       skipBtn.classList.toggle('show', showSkip);
 
-      // フィールドにカードがあり、プレイヤーのターンでなければ「流す」ボタン表示
-      const showNextTurn = fieldCards.length > 0 && currentPlayerIndex !== 0 && gameActive && !players[0].finished;
+      // 「流す」ボタン：誰もカードを出せない状況のときのみ表示
+      const showNextTurn = fieldCards.length > 0 &&
+                           currentPlayerIndex !== 0 &&
+                           gameActive &&
+                           !players[0].finished &&
+                           !canAnyonePlay();
       nextTurnBtn.classList.toggle('show', showNextTurn);
+    }
+
+    // 誰かがカードを出せるかどうかをチェック
+    function canAnyonePlay() {
+      for (let i = 0; i < players.length; i++) {
+        const player = players[i];
+        if (player.finished || player.passed) continue;
+
+        const playableHands = findPlayableHands(player.hand);
+        if (playableHands.length > 0) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function getRandomDialogue(personality, action) {
@@ -2887,11 +3196,30 @@
         if (dialogue) {
           setTimeout(() => {
             showSpeechBubble(cpu.index, dialogue, 'normal', 5000);
-          }, i * 500); // 0.5秒ずつずらす
+          }, i * 500);
         }
       }
 
       await wait(2200);
+    }
+
+    // プレイヤーが上がった時のCPUリアクション
+    async function showCPUReactionsToPlayerFinish() {
+      const cpuPlayers = players.map((p, i) => ({ ...p, index: i })).filter(p => !p.isHuman && !p.finished);
+      if (cpuPlayers.length === 0) return;
+
+      // 全CPUが悔しいリアクション
+      for (let i = 0; i < cpuPlayers.length; i++) {
+        const cpu = cpuPlayers[i];
+        const dialogue = getRandomDialogue(cpu.personality, 'reactPlayerFinish');
+        if (dialogue) {
+          setTimeout(() => {
+            showSpeechBubble(cpu.index, dialogue, 'angry', 4500);
+          }, i * 400);
+        }
+      }
+
+      await wait(2500);
     }
 
     async function playDialogue(text, duration = 1500) {
@@ -3477,9 +3805,18 @@
 
       if (player.hand.length === 0) {
         playerFinished(currentPlayerIndex);
+        const playerRank = finishOrder.length; // 現在の順位（1から始まる）
 
-        // 上がった時のセリフ
-        if (!player.isHuman) {
+        // 上がった時の演出
+        if (player.isHuman) {
+          // プレイヤーが上がった！
+          await showPlayerFinishEffect(playerRank);
+          await wait(500);
+
+          // CPUたちの悔しいリアクション
+          await showCPUReactionsToPlayerFinish();
+        } else {
+          // CPUが上がった時のセリフ
           const dialogue = getRandomDialogue(player.personality, 'finish');
           if (dialogue) {
             showSpeechBubble(currentPlayerIndex, dialogue, 'normal', 8000);
@@ -3999,6 +4336,16 @@
         resultsListEl.appendChild(li);
       });
 
+      // 煽りセリフを表示
+      const tauntArea = document.getElementById('taunt-area');
+      if (tauntArea) {
+        const taunts = GAME_OVER_TAUNTS[`rank${playerRank}`];
+        if (taunts && taunts.length > 0) {
+          const randomTaunt = taunts[Math.floor(Math.random() * taunts.length)];
+          tauntArea.innerHTML = `<p class="taunt-text">「${randomTaunt}」</p>`;
+        }
+      }
+
       setTimeout(() => {
         gameOverEl.classList.add('show');
         // Show victory演出
@@ -4115,39 +4462,37 @@
       }, 300);
     });
 
-    // Reset button - 難易度選択に戻る
-    const resetBtn = document.getElementById('reset-btn');
-    resetBtn.addEventListener('click', () => {
-      if (confirm('ゲームをリセットして最初からやり直しますか？')) {
-        // ゲーム状態をリセット
-        gameActive = false;
-        players = [];
-        fieldCards = [];
-        selectedCards = [];
-        finishOrder = [];
-        revolution = false;
-        isShibariActive = false;
-        isElevenBackActive = false;
-        skipRequested = false;
-        nextTurnRequested = false;
+    // 「最初に戻る」ボタン - ゲーム終了画面から難易度選択に戻る
+    const backToStartBtn = document.getElementById('back-to-start-btn');
+    backToStartBtn.addEventListener('click', () => {
+      // ゲーム状態をリセット
+      gameActive = false;
+      players = [];
+      fieldCards = [];
+      selectedCards = [];
+      finishOrder = [];
+      revolution = false;
+      isShibariActive = false;
+      isElevenBackActive = false;
+      skipRequested = false;
+      nextTurnRequested = false;
 
-        // UIをリセット
-        opponentsArea.innerHTML = '';
-        fieldCardsEl.innerHTML = '';
-        playerHandEl.innerHTML = '';
-        messageEl.textContent = '';
-        fieldInfoEl.textContent = '';
-        revolutionStatus.classList.remove('active');
-        shibariStatus.classList.remove('active');
-        skipBtn.classList.remove('show');
-        nextTurnBtn.classList.remove('show');
+      // UIをリセット
+      opponentsArea.innerHTML = '';
+      fieldCardsEl.innerHTML = '';
+      playerHandEl.innerHTML = '';
+      messageEl.textContent = '';
+      fieldInfoEl.textContent = '';
+      revolutionStatus.classList.remove('active');
+      shibariStatus.classList.remove('active');
+      skipBtn.classList.remove('show');
+      nextTurnBtn.classList.remove('show');
 
-        // ゲームオーバー画面を閉じる
-        document.getElementById('game-over').classList.remove('show');
+      // ゲームオーバー画面を閉じる
+      gameOverEl.classList.remove('show');
 
-        // スタート画面を表示
-        startModal.classList.remove('hide');
-      }
+      // スタート画面を表示
+      startModal.classList.remove('hide');
     });
 
     // Help modal
